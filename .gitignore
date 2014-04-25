@@ -1,0 +1,9 @@
+# exclude the build folder
+build/
+
+# exclude backup files
+*~
+*.bak
+
+# exclude txt files
+*.txt

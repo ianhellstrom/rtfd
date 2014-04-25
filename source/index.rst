@@ -1,22 +1,15 @@
-.. Oracle PL/SQL Optimization for Developers documentation master file, created by
-   sphinx-quickstart on Fri Apr 25 20:21:48 2014.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to Oracle PL/SQL Optimization for Developers's documentation!
-=====================================================================
+#########################################
+Oracle PL/SQL Optimization for Developers
+#########################################
+Oracle PL/SQL optimization for developers is a `Sphinx <http://sphinx-doc.org>`_ documentation project initiated by Ian (Christian) Hellström.
+Its aim is to aid developers in writing efficient SQL and PL/SQL code for modern Oracle databases. 
 
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+   intro
+   sql
+   plsql
+   glossary
