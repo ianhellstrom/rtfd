@@ -2,7 +2,7 @@
 Documentation repository for `oracle.rtfd.org <http://oracle.rtfd.org>`_
 ########################################################################
 
-Oracle PL/SQL optimization for developers is a `Sphinx <http://sphinx-doc.org>`_ documentation project initiated by Ian (Christian) Hellström. 
+Oracle SQL & PL/SQL optimization for developers is a `Sphinx <http://sphinx-doc.org>`_ documentation project initiated by Ian (Christian) Hellström. 
 Its aim is to aid developers in writing efficient SQL and PL/SQL code for modern Oracle databases. 
 It is also a chronicle of successful and not so successful experiments as a developer for various production systems.
 

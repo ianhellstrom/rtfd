@@ -26,8 +26,9 @@ The fact of the matter is that they have run into one of many traps, such as non
 Other programming languages, especially the more common third-generation ones, do not have that problem: applications are mostly developed by professional developers who (should) know what they're doing.
 
 There are many excellent references on the topic of SQL and PL/SQL optimization, most notably Oracle's own extensive `documentation`_, Tom Kyte's `Ask Tom`_ Q&A website, entries by `Burleson Consulting`_,  Tim Hall's `Oracle Base`_ pages, Steven Feuerstein's `PL/SQL Obsession`_, `Oracle Developer`_, `books`_, and a wealth of blogs (e.g. by `Oracle ACEs`_).
+
 'So why this guide?' we hear you ask.
-The reasons are twofold:
+Two reasons really:
 
 #. It's a long and at times arduous journey to master Oracle databases, and it's one that never ends: Oracle continues to develop its flagship database product and it is doubtful that anyone knows everything about its internals.
    We hope that other developers will benefit from the experiences (and rare insights) chronicled here.
@@ -53,7 +54,7 @@ System and User Requirements
 ****************************
 There are many free (and paid) resources that you can use to learn more about `SQL`_ and `Oracle`_.
 Before we can talk about optimization of SQL queries and PL/SQL scripts, however, you have to understand the basics of SQL.
-This manual is written for people with at least some experience with SQL or PL/SQL on production Oracle databases, in particular (aspiring) developers.
+This manual is written for people with at least some experience with SQL or PL/SQL on Oracle databases in a production environment, in particular (aspiring) developers.
 Should you have only ever looked at the sample databases, you are not likely to gain much by reading these pages; we shall briefly cover a bunch of database basics but they are mainly meant to refresh people's memories.
 
 It is recommended that you read the manual in its entirety, as we have try our best to gradually go from easy to more advanced optimization techniques.
