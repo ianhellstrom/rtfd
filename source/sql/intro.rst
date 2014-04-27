@@ -29,7 +29,7 @@ Because of its ubiquity SQL became a standard of ANSI in 1986 and ISO one year l
 Before you start shouting 'Halleluja!' from the rooftops, bear in mind that large parts of SQL are the same across the many database vendors but many are not.
 For example:
 
-* ``COALESCE(…)`` is the ANSI SQL function that Oracle has implemented but most Oracle SQL developers use ``NVL(…)`` instead; in SQL Server there is ``ISNULL(…)`` even though ``COALESCE(…)`` works too.
+* ``COALESCE(...)`` is the ANSI SQL function that Oracle has implemented but most Oracle SQL developers use ``NVL(...)`` instead; in SQL Server there is ``ISNULL(...)`` even though ``COALESCE(...)`` works too.
 * ``SELECT 3.1415 AS pi`` gives you a table with one row and one column in SQL Server, but all Oracle gives you is an ``ORA-00923`` error because it did not find the ``FROM`` keyword where it expected it.
   Oracle needs ``FROM DUAL`` to make the query work.
 * Returning ten rows from a result set can be accomplished with ``SELECT TOP 10`` in SQL Server.
@@ -40,7 +40,7 @@ For example:
 * There are three inequality comparison operators in Oracle: ``<>``, which is the standard operator, ``!=``, which most databases accept too, and ``^=``, which happens to be supported by IBM DB2 but not by Microsoft SQL Server, for instance.
 
 We could go on with our list but you probably get the message: even if you stick to the ANSI SQL standard as much as possible, you may not end up with portable code.
-Anyway, portability is by no means necessary: if you spend all your days working with Oracle databases, why care about ``NVL(…)`` not being understood by SQL Server? `Joe Celko's books`_ are great if you are interested in ANSI-compliant SQL tips and tricks.
+Anyway, portability is by no means necessary: if you spend all your days working with Oracle databases, why care about ``NVL(...)`` not being understood by SQL Server? `Joe Celko's books`_ are great if you are interested in ANSI-compliant SQL tips and tricks.
 
 As we have said before, we shall assume that you have knowledge of and considerable experience with SQL and Oracle.
 If not, you can read on but we do not recommend it.

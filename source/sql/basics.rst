@@ -111,7 +111,7 @@ Other than that, your credibility as a developer might get a slight bump.
 
 * **Comments**.
 
-  * Add meaningful comments to your code: either use ``/* … */`` for (multiline) comment blocks or ``--`` for comments that do not extend to the next line.
+  * Add meaningful comments to your code: either use ``/* ... */`` for (multiline) comment blocks or ``--`` for comments that do not extend to the next line.
     The key word here is *meaningful*.
     Trivial comments should not be added as they clutter your code and are immediately obvious to all but the brain-dead.
 
