@@ -35,7 +35,7 @@ We shall try and not confuse them but we don't want to make promises we can't ke
 Important to note is that rows can appear more than once in relational databases, so the idea that we can have only distinct elements in sets does not strictly apply; with the ``DISTINCT`` clause you can again obtain all unique elements but that is not really the point.
 `Multisets`_ provide the appropriate generalization upon which RDBMSs are actually based, but even then SQL will deviate from the relational model.
 For instance, columns can be anonymous.
-Yes, we know: Oracle automatically assigns the expression of a column without an alias as the column name when outputting but that does not make it an actual attribute — try accessing it from outside a subquery or CTAS'ing into a new table without an ORA-00998 error telling you to ``name this expression with a column alias``.
+Yes, we know: Oracle automatically assigns the expression of a column without an alias as the column name when outputting but that does not make it an actual attribute — try accessing it from outside a subquery or CTAS'ing into a new table without an ``ORA-00998`` error telling you to ``name this expression with a column alias``.
 Anyway, we shall not dwell on any additional idiosyncrasies pertaining to the relational model.
 In case you do crave for more details on the relational model though, we recommend the book *SQL and Relational Theory* by `Christopher J. Date`_.
 
