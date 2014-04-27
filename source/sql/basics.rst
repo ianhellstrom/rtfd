@@ -216,3 +216,100 @@ When Oracle processes the ``GROUP BY`` clause the alias ``item`` is not yet know
 Execution Plans
 ===============
 What happens to your SQL statement when you hit execute?
+
+First, Oracle checks you statement for any glaring errors.
+The syntax check verifies whether the language elements are sequenced correctly to form valid statements.
+If you have neither made any typos in keywords and the like nor sequenced the language elements improperly, you're good for the next round.
+Now Oracle moves on to evaluate the meaning of your syntactically legal code, which is known as semantic analysis. 
+All references to database objects and host variables are scrutinized by Oracle to make sure they are valid. 
+Oracle also inspects whether you are authorized to access the data.
+These checks expand views referenced by your statement into separate query blocks.
+For more details we refer you to the chapter *Syntactic and Semantic Checking* of the *Programmer's Guide to the Oracle Precompilers* for your `database version`_.
+
+Once your SQL statement has passed both checks with flying colours, your statement receives a SQL ID and (MD5) hash value. 
+The hash value is based on the first `few hundred characters`_ of your statement, so hash collisions can occur, especially for long statements.
+
+You can find out the SQL ID and hash value of your SQL statement by querying ``V$SQL``. 
+To make life easier it is often best to add a comment unique to your statement, for instance ``SELECT /* my_custom_comment */ last_name, first_name FROM people``.
+Then you can simply look for your query from ``V$SQL``:
+
+.. code-block:: sql
+   :linenos:
+
+   SELECT 
+           sql_id
+         , hash_value
+         , plan_hash_value
+         , sql_text
+   FROM    v$sql
+   WHERE   sql_text LIKE 'SELECT /* my_custom_comment */%'
+   ;
+
+In case you happen to know the SQL ID already and would like to know the corresponding hash value, you can use the function ``DBMS_UTILITY.SQLID_TO_SQLHASH``, which takes the sql_id (``VARCHAR2``) and returns a ``NUMBER``. 
+Note that all characters and character classes affect the hash value, that includes spaces, line breaks, and of course comments.
+
+The last stage of the parser is to look for possible shortcuts by sifting through the shared pool, which is a *portion of the SGA that contains shared memory constructs such as shared SQL areas*, which hold *the parse tree and execution plan for a SQL statement*; each unique statement has only one shared SQL area.
+We can distinguish two cases: `hard and soft parses`_.
+
+#. **Soft parse** (library cache hit): if the statement hashes to a value that is identical to one already present in the shared pool *and* the texts of the matching hash values are the same *and* its parsed representation can be shared, Oracle looks up the execution plan and executes the statement accordingly.
+   Literals must also be the same for Oracle to be able to use the same shared SQL area; the exception is when ``CURSOR_SHARING`` is set to ``FORCE``.
+
+#. **Hard parse** (library cache miss): if the statement has a hash value different from the ones that are available in the SGA *or* its parsed representation cannot be shared, Oracle hands the code submitted over to the query optimizer.
+   The query optimizer then has to build an executable version from scratch.
+
+Criteria for when a SQL statement or PL/SQL block can be shared are described in the *Oracle Database Performance Tuning Guide*, which can be found `here <http://docs.oracle.com/cd/E16655_01/server.121/e15857/tune_shared_pool.htm#TGDBA564>`_. 
+Basically, the statements' hashes and texts, all referenced objects, any bind variables (name, data type, and length), and the session environments have to match. PL/SQL blocks that do not use bind variables are said to be not re-entrant, and they are always hard-parsed.
+To see why statements cannot be shared you can use the view ``V$SQL_SHARED_CURSOR``.
+
+.. _fig-proc:
+
+.. figure:: images/query-proc.*
+   :scale: 40%
+   :alt: query processing steps
+   
+   Steps performed in sequence when a SQL statement is submitted to Oracle.
+
+>>>
+
+cursor *handle or name for a private SQL area in the PGA*. priate sql area *holds a parsed statement and other information, such as bind variable values, query execution state information and query execution work areas*.
+
+Perhaps you noticed that we had sneaked in the column ``plan_hash_value`` in the ``V$SQL`` query above. 
+The significance of the plan hash value becomes apparent at the final stage of the parser, where Oracle looks for possible shortcuts.
+
+The plan hash value is an `indicator`_ of the same operations on objects, not the similarity of runtime performance: filter and access predicates are not part of the plan hash value claculationl
+
+If, however, you query is different from the ones already submitted, then Oracle gives your query to the query optimizer.
+Interestingly, Oracle only uses the first 200 characters or so of a SQL statement, so longer statements can have the same hash even though they are syntactically quite different. Hash collisions can and will occur for longer statements.
+
+Even you fiddle around with capitalization of keywords or adding/removing spaces, the sql_id and hash_value will be different as you can see when you query V$SQL
+
+The plan hash value, which is shown for each execution plan, is the hash of the execution plan that is generated for the SQL statement, not to be confused with the hash value of the statement. For instance, if two queries 
+
+Good example: http://stackoverflow.com/a/16012239
+
+SQL compiler *compiles SQL statements into a shared cursor. The SQL compiler is made up of the parser, the optimizer, and the row source generator*.
+
+Shared cursor:
+
+Row source generator *receives the optimal plan from the optimizer and outputs the execution plan for the SQL statement*.
+
+The query optimizer, or just optimizer, is the *built-in database softwware that determines the most efficient way to execute a SQL statement*. The optimizer is also known as the cost-based optimizer (CBO), and it consists of the query transformer, the estimator and the plan generator.
+
+The query transformer *decides whether to rewrite a user query to generate a better query plan, merges views, and performs subquery unnesting*.
+
+The estimator *uses statistics to estimate the selectivity, cardinality, and cost of execution plans. The main goal of the estimator is to estimate the overall cost of an execution plan*.
+
+The plan generator *tries out different possible plans for a given query so that the query optimizer can choose the plan with the lowest cost. It explores different plans for a query block by trying out different access paths, join methods, and join orders*.
+
+
+.. _database version: http://www.oracle.com/technetwork/documentation/index.html#database
+.. _few hundred characters: http://www.dba-oracle.com/concepts/hashing.htm
+.. _indicator: http://oracle-randolf.blogspot.de/2009/07/planhashvalue-how-equal-and-stable-are.html
+.. _hard and soft parses: http://www.dba-oracle.com/t_hard_vs_soft_parse_parsing.htm
+
+http://docs.oracle.com/cd/E16655_01/server.121/e17633/sqllangu.htm#CNCPT216
+
+
+http://docs.oracle.com/cd/E16655_01/server.121/e17633/sqllangu.htm#CNCPT88910
+
+More info: Oracle Database Concepts http://www.oracle.com/technetwork/documentation/index.html#database SQL>SQL Optimizer.
