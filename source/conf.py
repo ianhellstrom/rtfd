@@ -201,7 +201,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'OraclePLSQLOptimizationforDevelopers.tex', u'Oracle SQL & PL/SQL Optimization for Developers Documentation',
+  ('index', 'OraclePLSQLOptimizationforDevelopers.tex', u'Oracle SQL \& PL/SQL Optimization for Developers Documentation',
    u'Ian Hellström', 'manual'),
 ]
 
