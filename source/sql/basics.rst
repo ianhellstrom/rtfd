@@ -57,13 +57,18 @@ Other than that, your credibility as a developer might get a slight bump.
   * Stick to existing rules regarding style, object nomenclature, comments, and documentation as much as possible.
     When it comes to object naming, be sure to follow whatever is generally accepted at your organization.
     For example, are underscores used (``FIRST_NAME``) instead of spaces or is it common to simply concatenate words (``FIRSTNAME``)?
-    If there are no rules or guidelines yet, establish them with your team, write them down with enough of examples so that they are clear to all, publish them where everyone can see them, and stick to your guns.
+    If there are no rules or guidelines yet, establish them with your team, write them down with plenty of examples so that they are clear to all, publish them where everyone can see them, and stick to your guns.
     Although it should be clear, we'll say it anyway: be consistent.
 
   * Use the ANSI-standard ``JOIN`` in ``FROM`` clauses rather than the deprecated versions with commas and the ``(+)`` operator for outer joins.
     It's deprecated, so leave it be.
 
-* **Capitalization**. Keywords, reserved words, reserved namespaces and objects (i.e. tables, columns, indexes, …) are by default case-insensitive in Oracle, unless you have surrounded them by double quotes, like so: ``SELECT 42 AS "THE AnsweR" FROM DUAL``. It is generally not recommended that you use case-sensitive object names or names with spaces. Translation of object names into more human-readable formats is something that should ultimately be handled by an application and not the database. Note, however, that strings can be case-sensitive: ``SELECT last_name FROM people WHERE last_name = 'Jones'`` is different from ``SELECT last_name FROM people WHERE last_name = 'jones'``.
+* **Capitalization**. 
+  Keywords, reserved words, reserved namespaces and objects (i.e. tables, columns, indexes, …) are by default case-insensitive in Oracle, unless you have surrounded them by double quotes, like so: ``SELECT 42 AS "THE AnsweR" FROM DUAL``. 
+  It is generally not recommended that you use case-sensitive object names or names with spaces. 
+  Translation of object names into more human-readable formats is something that should ultimately be handled by an application and not the database. 
+  Note, however, that strings can be case-sensitive: ``SELECT last_name FROM people WHERE last_name = 'Jones'`` is different from ``SELECT last_name FROM people WHERE last_name = 'jones'``.
+  
 * **Semicolons**.
   Sentences end with full stops, SQL statements with semicolons.
   Not all RDBMS clients require a semicolon to execute a single SQL statement, but you save yourself a lot of trouble if you just learn to finish each statement with a semicolon.
@@ -118,14 +123,52 @@ Other than that, your credibility as a developer might get a slight bump.
   * Add meaningful comments to the data dictionary with the ``COMMENT`` statement.
     You can add comments to tables, (materialized) views, columns, operators and index types.
     Note that you can automatically generate documentation (HTML, PDF, CHM, …) from the metadata in the data dictionary (``SELECT * FROM dictionary``) with for instance the option to 'Generate DB Doc' from the connections window/tab in Oracle SQL Developer, Quest Toad's 'HTML Schema Doc Generator' in the Database > Report menu. Specialized tools to extract and display metadata from Oracle's data dictionary exist too: for example, the xSQL's excellent `Database Documenter`_ or the free `SchemaSpy`_.
+    
+* **Constraints**.
+  We've said it before and we are going to say it again: be consistent.
+  Especially when it comes to constraints that force user data into straitjackets.
+  Constraints are imperative to databases.
+  However, when you add ``NOT NULL`` constraints to columns that can have missing data (``NULL``), you force users to enter rubbish.
+  As they will soon find out after receiving an error message: a blank space will often do the trick.
+  Before you think about adding ``TRIM(...)`` or ``REGEXP_LIKE(...)`` checks to all data entered manually, think again: users will also quickly figure out that any random character (combination) will work and you cannot account for all possible situations.
+  Prior to 11g you may have needed to convert ``NULL`` to ``'N/A'`` or something similar to allow indexing on missing values, but that is not necessary `any longer`_.
+  The link shows a function-based B-tree index that includes columns with ``NULL``.
+  By the way, bitmap indexes include rows with ``NULL``; the default index is a B-tree index though.
 
-* **Formatting**
+* **Respect**.
+  No, you don't have to get all Aretha Franklin over your database, but you have to respect data types.
+  Never rely on implicit data type conversions, and always convince yourself that the data type you think applies, really does apply.
+  With a simple ``DESC table_name`` you can remove all doubt.
+  
+  If you're not convinced, please take a look at the following example, which shows you what you get when you sort numerical-looking data that is actually stored as a string.
+
+  .. code-block:: sql
+     :linenos:
+     
+     WITH
+       raw_data AS
+       (
+         SELECT 1 AS int_as_number, '1' AS int_as_varchar FROM dual
+         UNION ALL
+         SELECT 2 AS int_as_number, '2' AS int_as_varchar FROM dual
+         UNION ALL
+         SELECT 3 AS int_as_number, '3' AS int_as_varchar FROM dual
+         UNION ALL
+         SELECT 12 AS int_as_number, '12' AS int_as_varchar FROM dual
+         UNION ALL
+         SELECT 28 AS int_as_number, '28' AS int_as_varchar FROM dual
+       )
+     SELECT * FROM raw_data ORDER BY int_as_varchar;
+
+  The moral: do not assume anything when it comes to data types. Just because something looks like a number does not mean that it is stored as a number.
+
+* **Formatting**.
   Format your SQL queries and format them consistently.
   Better yet, use either a built-in formatter or use an `online formatter`_.
   Make sure you use the same formatting rules as your colleagues: it helps making sharing and analysing each other's code so much easier.
   It may come as a surprise but the actual format matters, even spaces!
   The result set that Oracle fetches for you does not depend on spaces but whether it needs to parse a statement with a single space extra.
-  We shall talk more about (hard/soft) parsing of statements later when we discuss execution plans (see :ref:`sql-execplan`), but for now suffice to say that each query needs to be hashed and analysed by Oracle before it can execute it.
+  We shall talk more about (hard/soft) parsing of statements later when we discuss :ref:`execution plans <sql-exec-plan>`, but for now suffice to say that each query needs to be hashed and analysed by Oracle before it can execute it.
   If the query hashes are the same, which generally means that the query you have submitted is formatted identically as one in memory (the system global area (SGA) to be precise), Oracle can immediately execute it. If not, Oracle needs to analyse your query first.
   As said on `DBA Oracle`_, the time Oracle needs to parse a statement is almost negligible, but when many users issue functionally and syntactically identical yet symbolically distinct statements, the small amounts of time can quickly add up.
 
@@ -144,6 +187,7 @@ Although there is no general consensus about good formatting rules, you can add 
 .. _SchemaSpy: http://schemaspy.sourceforge.net/
 .. _online formatter: http://www.dpriver.com/pp/sqlformat.htm
 .. _DBA Oracle: http://www.dba-oracle.com/t_sql_statements_formatting.htm
+.. _any longer: http://www.dba-oracle.com/oracle_tips_null_idx.htm
 
 .. _sql-proc-order:
 
@@ -181,7 +225,7 @@ Now, suppose you have purchased a robot to help you around the house, and its fi
 How would you tell it go fetch a beer and a packet of crisps?
 
 Well, you'd probably tell it to go to the fridge, look for beer, grab a bottle (50 fl oz) with a temperature below 5 degrees Celsius, then go to the pantry and look for a 250g packet of cream cheese crisps. Once it's done, it should come back to you and place the items in front of you, sorted in the way you asked it to do.
-That's right, you first tell it to go to the place where the fridge and the pantry are located (probably the kitchen: ``FROM``), then to look for everything that matches your criteria (``WHERE``), and finally to return the items sorted in the order you specified (``ORDER BY``).
+That's right, you first tell it to go to the place where the fridge and the pantry are located (probably the kitchen: ``FROM``), then to look for everything that matches your criteria (``WHERE``), and finally to return the items (``SELECT``) sorted in the order you specified (``ORDER BY``).
 
 That's pretty much what Oracle does too. 
 The order in which clauses are logically processed by Oracle is as follows: ``FROM -> CONNECT BY -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY``.
@@ -211,7 +255,7 @@ The processing order is also the reason why the previous query worked like a cha
 
 When Oracle processes the ``GROUP BY`` clause the alias ``item`` is not yet known, so you are greeted by an ``ORA-00904: invalid identifier`` error.
 
-.. _sql-execplan:
+.. _sql-exec-plan:
 
 Execution Plans
 ===============
@@ -235,7 +279,7 @@ Then you can simply look for your query from ``V$SQL``:
 
 .. code-block:: sql
    :linenos:
-
+   
    SELECT 
            sql_id
          , hash_value
@@ -245,71 +289,58 @@ Then you can simply look for your query from ``V$SQL``:
    WHERE   sql_text LIKE 'SELECT /* my_custom_comment */%'
    ;
 
-In case you happen to know the SQL ID already and would like to know the corresponding hash value, you can use the function ``DBMS_UTILITY.SQLID_TO_SQLHASH``, which takes the sql_id (``VARCHAR2``) and returns a ``NUMBER``. 
-Note that all characters and character classes affect the hash value, that includes spaces, line breaks, and of course comments.
+In case you happen to know the SQL ID already and would like to know the corresponding hash value, you can use the function ``DBMS_UTILITY.SQLID_TO_SQLHASH``, which takes the ``sql_id`` (``VARCHAR2``) and returns a ``NUMBER``. 
+Note that *all* characters affect the hash value, including spaces and line breaks as well as capitalization and of course comments.
 
-The last stage of the parser is to look for possible shortcuts by sifting through the shared pool, which is a *portion of the SGA that contains shared memory constructs such as shared SQL areas*, which hold *the parse tree and execution plan for a SQL statement*; each unique statement has only one shared SQL area.
+The last stage of the parser is to look for possible shortcuts by sifting through the shared pool, which is a *portion of the SGA that contains shared memory constructs such as shared SQL areas*, which hold the parse tree and execution plans for SQL statements; each unique statement has only one shared SQL area.
 We can distinguish two cases: `hard and soft parses`_.
 
 #. **Soft parse** (library cache hit): if the statement hashes to a value that is identical to one already present in the shared pool *and* the texts of the matching hash values are the same *and* its parsed representation can be shared, Oracle looks up the execution plan and executes the statement accordingly.
    Literals must also be the same for Oracle to be able to use the same shared SQL area; the exception is when ``CURSOR_SHARING`` is set to ``FORCE``.
 
-#. **Hard parse** (library cache miss): if the statement has a hash value different from the ones that are available in the SGA *or* its parsed representation cannot be shared, Oracle hands the code submitted over to the query optimizer.
+#. **Hard parse** (library cache miss): if the statement has a hash value different from the ones that are available in the SGA *or* its parsed representation cannot be shared, Oracle hands the code over to the query optimizer.
    The query optimizer then has to build an executable version from scratch.
 
 Criteria for when a SQL statement or PL/SQL block can be shared are described in the *Oracle Database Performance Tuning Guide*, which can be found `here <http://docs.oracle.com/cd/E16655_01/server.121/e15857/tune_shared_pool.htm#TGDBA564>`_. 
 Basically, the statements' hashes and texts, all referenced objects, any bind variables (name, data type, and length), and the session environments have to match. PL/SQL blocks that do not use bind variables are said to be not re-entrant, and they are always hard-parsed.
-To see why statements cannot be shared you can use the view ``V$SQL_SHARED_CURSOR``.
-
-.. _fig-proc:
-
-.. figure:: images/query-proc.*
-   :scale: 40%
-   :alt: query processing steps
-   
-   Steps performed in sequence when a SQL statement is submitted to Oracle.
-
->>>
-
-cursor *handle or name for a private SQL area in the PGA*. priate sql area *holds a parsed statement and other information, such as bind variable values, query execution state information and query execution work areas*.
+To find out why statements cannot be shared you can use the view ``V$SQL_SHARED_CURSOR``.
 
 Perhaps you noticed that we had sneaked in the column ``plan_hash_value`` in the ``V$SQL`` query above. 
-The significance of the plan hash value becomes apparent at the final stage of the parser, where Oracle looks for possible shortcuts.
+SQL statements with different hash values can obviously have the `same plan`_, which means that their plan hash values are equal.
+Please note that the plan hash value is merely an `indicator`_ of similar operations on database objects: filter and access predicates, which we shall discuss in more detail, are not part of the plan hash value calculation.
 
-The plan hash value is an `indicator`_ of the same operations on objects, not the similarity of runtime performance: filter and access predicates are not part of the plan hash value claculationl
+For hard parses, the next station on the SQL compiler line is the query optimizer.
+The query optimizer, or just optimizer, is the *built-in database software that determines the most efficient way to execute a SQL statement*. 
+The optimizer is also known as the cost-based optimizer (CBO), and it consists of the query transformer, the estimator, and the plan generator:
 
-If, however, you query is different from the ones already submitted, then Oracle gives your query to the query optimizer.
-Interestingly, Oracle only uses the first 200 characters or so of a SQL statement, so longer statements can have the same hash even though they are syntactically quite different. Hash collisions can and will occur for longer statements.
+* The query transformer *decides whether to rewrite a user query to generate a better query plan, merges views, and performs subquery unnesting*.
+* The estimator *uses statistics [from the data dictionary] to estimate the selectivity, cardinality, and cost of execution plans. 
+  The main goal of the estimator is to estimate the overall cost of an execution plan*.
+* The plan generator *tries out different possible plans for a given query so that the query optimizer can choose the plan with the lowest cost. It explores different plans for a query block by trying out different access paths, join methods, and join orders*. The optimizer also evaluates expressions, and it can convert correlated subqueries into equivalent join statements or vice versa.
 
-Even you fiddle around with capitalization of keywords or adding/removing spaces, the sql_id and hash_value will be different as you can see when you query V$SQL
+What the optimizer does, in a nutshell, is apply fancy heuristics to figure out the best way to execute your query: it calculates alternate routes from your screen through the database back to your screen, and picks the best one.
+By default Oracle tries to minimize the `estimated resource usage`_ (i.e. maximize the throughput), which depends on I/O, CPU, memory, the number of rows returned, and the size of the initial data sets.
+The objective of the optimization can be altered by changing the value of ``OPTIMIZER_MODE`` parameter.
 
-The plan hash value, which is shown for each execution plan, is the hash of the execution plan that is generated for the SQL statement, not to be confused with the hash value of the statement. For instance, if two queries 
+If you can recall our :ref:`example <sql-proc-order>` of the robot, the beer, and the packet of crisps, you may remember that the robot had to check both the pantry and the fridge.
+If we equip our robot with Oracle's query optimizer, the robot will not simply walk to the kitchen, find the items by searching for them, and then return with our refreshments, but try to do it as efficiently as possible.
+It will modify our query without altering the query's function (i.e. fetch you some booze and a few nibbly bits), and explore its options when it comes to retrieving the items from the kitchen.
+For instance, if we happen to have a smart fridge with a display on the door that shows where all bottles are located, including the contents, temperature, and size of each bottle, the robot does not have to rummage through decaying fruit and vegetables at the bottom in the hope that a bottle is located somewhere underneath the rubbish.
+Instead it can look up the drinks (from an index) and fetch the bottles we want by removing them the spots highlighted on the display (by ROWID).
+What the optimizer can also figure out is whether it is more advantageous to grab the beers and then check the pantry, or the other way round (join order).
+If the robot has to go down a few steps to obtain crisps while still holding the beer in its hands, the optimizer may decide that carrying the heavy and/or many beverages may be inefficient.
+Furthermore, it may decide to pick up a tray and place the products it has already extracted on it (temporary table) while continuing its search for the remaining items.
+Because the optimizer evaluates expressions it will know whether or not it has to do something: a predicate like ``0 = 1`` will be immediately understood by the optimizer, so that our friendly robot knows it has to do bugger all beforehand.
 
-Good example: http://stackoverflow.com/a/16012239
+After the optimizer has given its blessings to the optimal execution plan, the row source generator is let loose on that plan. The row source generator produces an iterative plan, which is known as the `query plan`_. The query plan is a binary program that produces the result set when executed. 
+It is structured as a row source tree, where a row source is the combination of a set of rows returned by a step in the execution plan and *a control structure that can iteratively process the rows*, that is one row at a time. The row source tree shows an ordering of the tables, an access method for each table, a join method for tables affected by join operations, and data operations (filter, sort, aggregation)
 
-SQL compiler *compiles SQL statements into a shared cursor. The SQL compiler is made up of the parser, the optimizer, and the row source generator*.
-
-Shared cursor:
-
-Row source generator *receives the optimal plan from the optimizer and outputs the execution plan for the SQL statement*.
-
-The query optimizer, or just optimizer, is the *built-in database softwware that determines the most efficient way to execute a SQL statement*. The optimizer is also known as the cost-based optimizer (CBO), and it consists of the query transformer, the estimator and the plan generator.
-
-The query transformer *decides whether to rewrite a user query to generate a better query plan, merges views, and performs subquery unnesting*.
-
-The estimator *uses statistics to estimate the selectivity, cardinality, and cost of execution plans. The main goal of the estimator is to estimate the overall cost of an execution plan*.
-
-The plan generator *tries out different possible plans for a given query so that the query optimizer can choose the plan with the lowest cost. It explores different plans for a query block by trying out different access paths, join methods, and join orders*.
-
+During execution, the SQL engine executes each row source in the tree produced by the row source generator. This step is the only mandatory step in DML processing.
 
 .. _database version: http://www.oracle.com/technetwork/documentation/index.html#database
 .. _few hundred characters: http://www.dba-oracle.com/concepts/hashing.htm
 .. _indicator: http://oracle-randolf.blogspot.de/2009/07/planhashvalue-how-equal-and-stable-are.html
 .. _hard and soft parses: http://www.dba-oracle.com/t_hard_vs_soft_parse_parsing.htm
-
-http://docs.oracle.com/cd/E16655_01/server.121/e17633/sqllangu.htm#CNCPT216
-
-
-http://docs.oracle.com/cd/E16655_01/server.121/e17633/sqllangu.htm#CNCPT88910
-
-More info: Oracle Database Concepts http://www.oracle.com/technetwork/documentation/index.html#database SQL>SQL Optimizer.
+.. _same plan: http://stackoverflow.com/a/16012239
+.. _estimated resource usage: http://docs.oracle.com/cd/E16655_01/server.121/e15858/tgsql_optcncpt.htm#TGSQL195
+.. _query plan: http://docs.oracle.com/cd/E16655_01/server.121/e15858/tgsql_sqlproc.htm#TGSQL184

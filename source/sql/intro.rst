@@ -33,7 +33,9 @@ For example:
 * ``SELECT 3.1415 AS pi`` gives you a table with one row and one column in SQL Server, but all Oracle gives you is an ``ORA-00923`` error because it did not find the ``FROM`` keyword where it expected it.
   Oracle needs ``FROM DUAL`` to make the query work.
 * Returning ten rows from a result set can be accomplished with ``SELECT TOP 10`` in SQL Server.
-  Oracle requires you apply a filter like ``WHERE ROWNUM <= 10``. To get the actual top-10 rows (based on some ordering), Oracle requires a subquery with an ``ORDER BY`` clause, whereas SQL Server allows you to simply issue ``ORDER BY`` in the same query.
+  Oracle requires you apply a filter like ``WHERE ROWNUM <= 10``. 
+  To get the actual top-10 rows (based on some ordering), Oracle requires a subquery with an ``ORDER BY`` clause, whereas SQL Server allows you to simply issue ``ORDER BY`` in the same query. 
+  As of `12c`_ it is possible to use the `row limiting clause`_ though: ``FETCH FIRST 10 ROWS ONLY``, which comes after the ``ORDER BY`` clause.
 * Window functions (i.e. aggregate functions in the ``SELECT`` clause that are accompanied by an ``OVER`` clause with ``PARTITION BY`` and/or ``ORDER BY``) are another cause of portability headaches: the `SQL:2011 <http://www.iso.org/iso/search.htm?qt=ISO+9075&sort_by=rel&type=simple&published=on&active_tab=standards>`_ (ISO/IEC 9075:2011) standard defines a window clause (``WINDOW``) that enables easy reuse (through an alias) of the same window but as of this writing no major RDBMS vendor, save for the open-source PostgreSQL project, has implemented the window clause.
 * Hierarchical queries are done with the ``CONNECT BY`` clause in Oracle, whereas SQL Server requires recursive common table expressions.
   Only since 11g R2 does Oracle support recursive common table expressions.
@@ -56,7 +58,9 @@ If not, you can read on but we do not recommend it.
 .. _Apache Hadoop: http://hadoop.apache.org
 .. _DB engines: http://db-engines.com/en/ranking
 .. _Gartner: http://www.gartner.com/technology/reprints.do?id=1-1M9YEHW&ct=131028&st=sb
-.. _Joe Celko's books: http://www.amazon.com/Joe-Celko/e/B000ARBFVQ/
+.. _12c: http://www.oracle-base.com/articles/12c/row-limiting-clause-for-top-n-queries-12cr1.php#top-n
+.. _row limiting clause: http://docs.oracle.com/cd/E16655_01/server.121/e17209/statements_10002.htm#SQLRF55631
+.. _Joe Celko's books: http://www.amazon.com/Joe-Celko/e/B000ARBFVQ
 
 .. [Codd69] *Derivability, Redundancy, and Consistency of Relations Stored in Large Data Banks*, E.F. Codd, IBM Research Report, 1969.
 .. [Codd70] *A relational model of data for large shared data banks*, E.F. Codd, Communication of the ACM, Vol. 13, pp. 377—387, 1970. DOI: `10.1145/362384.362685 <http://dx.doi.org/10.1145%2F362384.362685>`_.
