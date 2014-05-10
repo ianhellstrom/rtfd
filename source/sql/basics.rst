@@ -183,11 +183,21 @@ Although there is no general consensus about good formatting rules, you can add 
 * before semicolons
 * after the first, and before the last bracket of a large expression.
 
+Moreover, we recommend that each organization define a programming standards document that clearly specifies how to write consistent and maintainable code.
+At the very least the coding standards should tell you how to name objects and format code.
+That includes, but is not limited to, standard prefixes for all database objects, notation standards (e.g. keywords in upper case, application-specific identifiers in lower case, underscores between words in identifiers), maximum line length, line break rules, indentation spaces for code blocks, and default headers.
+If your IDE supports IntelliSense or something similar, then  `Hungarian notation`_ may be overkill, but for complex programs it may be beneficial to prefix the logical (Apps Hungarian) or the physical (Systems Hungarian) type to avoid collisions, although the former is often to be preferred to the latter.
+Two examples of programming standards documents for PL/SQL are `Steven Feuerstein's`_  or the one on `topcoder`_.
+
 .. _Database Documenter: http://www.xsql.com/products/database_documenter/
 .. _SchemaSpy: http://schemaspy.sourceforge.net/
 .. _online formatter: http://www.dpriver.com/pp/sqlformat.htm
 .. _DBA Oracle: http://www.dba-oracle.com/t_sql_statements_formatting.htm
 .. _any longer: http://www.dba-oracle.com/oracle_tips_null_idx.htm
+.. _Hungarian notation: http://programmers.stackexchange.com/a/39874
+.. _Steven Feuerstein's: http://www.toadworld.com/platforms/oracle/w/wiki/8245.plsql-standards.aspx
+.. _topcoder: http://www.topcoder.com/i/development/uml/Oracle_PLSQL_Coding_Guidelines.pdf
+
 
 .. _sql-proc-order:
 
@@ -273,7 +283,7 @@ For more details we refer you to the chapter *Syntactic and Semantic Checking* o
 Once your SQL statement has passed both checks with flying colours, your statement receives a SQL ID and (MD5) hash value. 
 The hash value is based on the first `few hundred characters`_ of your statement, so hash collisions can occur, especially for long statements.
 
-You can find out the SQL ID and hash value of your SQL statement by querying ``V$SQL``. 
+You can find out the SQL ID and hash value of your SQL statement by querying ``v$sql``. 
 To make life easier it is often best to add a comment unique to your statement, for instance ``SELECT /* my_custom_comment */ last_name, first_name FROM people``.
 Then you can simply look for your query from ``V$SQL``:
 

@@ -42,7 +42,7 @@ For example:
 * There are three inequality comparison operators in Oracle: ``<>``, which is the standard operator, ``!=``, which most databases accept too, and ``^=``, which happens to be supported by IBM DB2 but not by Microsoft SQL Server, for instance.
 
 We could go on with our list but you probably get the message: even if you stick to the ANSI SQL standard as much as possible, you may not end up with portable code.
-Anyway, portability is by no means necessary: if you spend all your days working with Oracle databases, why care about ``NVL(...)`` not being understood by SQL Server? `Joe Celko's books`_ are great if you are interested in ANSI-compliant SQL tips and tricks.
+Anyway, portability is by no means necessary: if you spend all your days working with Oracle databases, why care about ``NVL(...)`` not being understood by SQL Server? `Joe Celko's books`_ are great if you are interested in ANSI-compliant SQL tips and tricks. `SQL Performance Explained`_ by Markus Winand as well as his website `Use the Index, Luke!`_ come highly recommended for those who seek performance tweaking techniques for multiple database platforms.
 
 As we have said before, we shall assume that you have knowledge of and considerable experience with SQL and Oracle.
 If not, you can read on but we do not recommend it.
@@ -61,6 +61,8 @@ If not, you can read on but we do not recommend it.
 .. _12c: http://www.oracle-base.com/articles/12c/row-limiting-clause-for-top-n-queries-12cr1.php#top-n
 .. _row limiting clause: http://docs.oracle.com/cd/E16655_01/server.121/e17209/statements_10002.htm#SQLRF55631
 .. _Joe Celko's books: http://www.amazon.com/Joe-Celko/e/B000ARBFVQ
+.. _SQL Performance Explained: http://sql-performance-explained.com
+.. _Use the Index, Luke!: http://use-the-index-luke.com
 
 .. [Codd69] *Derivability, Redundancy, and Consistency of Relations Stored in Large Data Banks*, E.F. Codd, IBM Research Report, 1969.
 .. [Codd70] *A relational model of data for large shared data banks*, E.F. Codd, Communication of the ACM, Vol. 13, pp. 377—387, 1970. DOI: `10.1145/362384.362685 <http://dx.doi.org/10.1145%2F362384.362685>`_.
