@@ -15,7 +15,7 @@ Honestly, who gives a hoot!
 
 While IBM were still tinkering with their prototype System R, Larry Ellison, Bob Miner and Ed Oates founded Software Development Laboratories (SDL) in 1977.
 The first version (1978) was never released officially but the code name 'Oracle', taken from the CIA database project all three founders had worked on while at Ampex Corporation, remains to this day.
-Another years later they - now calling themselves  Relational Software Inc. (RSI) - released Oracle V2, the first commercially available implementation of SQL.
+Another year later they - now calling themselves  Relational Software Inc. (RSI) - released Oracle V2, the first commercially available implementation of SQL.
 It was not until 1979 that IBM had a commercial database product; IBM DB2 came out in 1983.
 A year before the release of DB2, Oracle decided they had enough of RSI and they became known as Oracle Systems Corporation, named after their primary product.
 In 1995 Oracle Systems Corporation was rechristened Oracle Corporation.
