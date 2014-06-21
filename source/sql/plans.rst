@@ -1,4 +1,4 @@
-.. _sql-plans:
+.. _sql-exec-plan:
 
 ***************
 Execution Plans
@@ -25,12 +25,14 @@ Then you can simply look for your query from ``v$sql``:
    :linenos:
    
    SELECT 
-           sql_id
-         , hash_value
-         , plan_hash_value
-         , sql_text
-   FROM    v$sql
-   WHERE   sql_text LIKE 'SELECT /* my_custom_comment */%'
+       sql_id
+     , hash_value
+     , plan_hash_value
+     , sql_text
+   FROM
+     v$sql
+   WHERE
+     sql_text LIKE 'SELECT /* my_custom_comment */%'
    ;
 
 In case you happen to know the SQL ID already and would like to know the corresponding hash value, you can use the function ``DBMS_UTILITY.SQLID_TO_SQLHASH``, which takes the sql_id (``VARCHAR2``) and returns a ``NUMBER``. 
@@ -97,6 +99,7 @@ Explain Plan
 ============
 As a developer, the execution plan is probably the best tool at your disposal to discover why a query performs the way it does *and*, if necessary, figure out what you can do about its performance.
 A 2011 Oracle white paper called *Explain the Explain Plan*, which is available on the `OTN`_, and the documentation on `optimizer access paths`_ form the basis for most of what is written in this section.
+Additionally, Jonathan Lewis has written an excellent series on the execution plan, the parts of which you can find `here <http://allthingsoracle.com/execution-plans-part-1-finding-plans>`_, `here <http://allthingsoracle.com/execution-plans-part-2-things-to-see>`_, and `here <http://allthingsoracle.com/execution-plans-part-3-the-rule>`_.
 
 So, how do you obtain the execution plan?
 

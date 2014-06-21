@@ -210,18 +210,22 @@ Let's look at the following query:
    :linenos:
    
    SELECT 
-               f.product AS beer
-             , p.product AS crisps
-   FROM        fridge f 
-   CROSS JOIN  pantry p 
-   WHERE       f.product         = 'Beer'
-               AND f.temperature < 5 
-               AND f.size        = '50 fl oz' 
-               AND p.product     = 'Crisps'
-               AND p.style       = 'Cream Cheese' 
-               AND p.size        = '250g'
-   ORDER BY    crisps
-             , beer
+       f.product AS beer
+     , p.product AS crisps
+   FROM
+     fridge f 
+   CROSS JOIN
+     pantry p 
+   WHERE
+     f.product         = 'Beer'
+     AND f.temperature < 5 
+     AND f.size        = '50 fl oz' 
+     AND p.product     = 'Crisps'
+     AND p.style       = 'Cream Cheese' 
+     AND p.size        = '250g'
+   ORDER BY
+       crisps
+     , beer
    ;
 
 What does this query tell you other than that you're a tad peckish, extremely thirsty, and that the fridge and pantry seem to use different systems of measurement?
@@ -255,12 +259,14 @@ The processing order is also the reason why the previous query worked like a cha
 .. code-block:: sql
    :linenos:
    
-   SELECT 
-             product          AS item
-           , MIN(temperature) AS min_temperature
-           , COUNT(*)         AS num_products
-   FROM      fridge
-   GROUP BY  item
+   SELECT
+       product          AS item
+     , MIN(temperature) AS min_temperature
+     , COUNT(*)         AS num_products
+   FROM
+     fridge
+   GROUP BY
+     item
    ;         
 
 When Oracle processes the ``GROUP BY`` clause the alias ``item`` is not yet known, so you are greeted by an ``ORA-00904: invalid identifier`` error.
