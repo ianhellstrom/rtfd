@@ -7,3 +7,5 @@ SQL
 .. include:: sql/basics.rst
 
 .. include:: sql/plans.rst
+
+.. include:: sql/indexes.rst
