@@ -935,10 +935,10 @@
     <node id="n3" yfiles.foldertype="group">
       <data key="d6">
         <y:TableNode configuration="YED_TABLE_NODE">
-          <y:Geometry height="159.0" width="244.19579039228728" x="117.24999999999977" y="302.5"/>
+          <y:Geometry height="159.0" width="243.30223570478728" x="117.24999999999977" y="302.5"/>
           <y:Fill color="#71B8FF" color2="#71B8FF" transparent="false"/>
           <y:BorderStyle hasColor="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Calibri" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="21.4609375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="100.826171875" x="71.68480925864364" y="4.0">Branch Node</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Calibri" fontSize="15" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="21.4609375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="100.826171875" x="71.23803191489364" y="4.0">Branch Node</y:NodeLabel>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="92.6640625" x="13.66796875" y="33.0">TEMPERATURE<y:LabelModel>
               <y:ColumnNodeLabelModel offset="3.0"/>
             </y:LabelModel>
@@ -946,7 +946,7 @@
               <y:ColumnNodeLabelModelParameter id="column_0" inside="true" verticalPosition="0.0"/>
             </y:ModelParameter>
           </y:NodeLabel>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="62.751953125" x="150.72191863364367" y="33.0">PRODUCT<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="62.751953125" x="150.27514128989367" y="33.0">PRODUCT<y:LabelModel>
               <y:ColumnNodeLabelModel offset="3.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -985,7 +985,7 @@
               <y:Column id="column_0" minimumWidth="80.0" width="120.0">
                 <y:Insets bottom="0.0" left="0.0" right="0.0" top="24.0"/>
               </y:Column>
-              <y:Column id="column_1" minimumWidth="80.0" width="124.19579039228728">
+              <y:Column id="column_1" minimumWidth="80.0" width="123.30223570478728">
                 <y:Insets bottom="0.0" left="0.0" right="0.0" top="24.0"/>
               </y:Column>
             </y:Columns>
@@ -1061,7 +1061,7 @@
               <y:Geometry height="30.0" width="30.0" x="282.2499999999998" y="394.5"/>
               <y:Fill hasColor="false" transparent="false"/>
               <y:BorderStyle hasColor="false" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Calibri" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="43.744140625" x="-6.8720703125" y="6.015625">unions<y:LabelModel>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Calibri" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="31.31640625" x="-0.658203125" y="6.015625">beer<y:LabelModel>
                   <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
                 <y:ModelParameter>
@@ -1080,7 +1080,7 @@
               <y:Geometry height="30.0" width="30.0" x="282.2499999999998" y="424.5"/>
               <y:Fill hasColor="false" transparent="false"/>
               <y:BorderStyle hasColor="false" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Calibri" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="29.306640625" x="0.3466796875" y="6.015625">milk<y:LabelModel>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Calibri" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="41.95703125" x="-5.978515625" y="6.015625">cream<y:LabelModel>
                   <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
                 <y:ModelParameter>

@@ -1080,7 +1080,7 @@
               <y:Geometry height="30.0" width="30.0" x="312.49999999999955" y="455.0"/>
               <y:Fill hasColor="false" transparent="false"/>
               <y:BorderStyle hasColor="false" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Calibri" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="11.634765625" x="9.1826171875" y="6.015625">5<y:LabelModel>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Calibri" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="11.634765625" x="9.1826171875" y="6.015625">2<y:LabelModel>
                   <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
                 <y:ModelParameter>
