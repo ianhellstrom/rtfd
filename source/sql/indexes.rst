@@ -109,7 +109,7 @@ The execution plans of CTAS and IAS statements show whether statistics are being
  
 If you change the definition of an index, you may want to update the statistics.
 Please coordinate with the DBA to avoid unwanted side effects, such as degrading the performance of all but your own queries because invalidation of execution plans; gathering statistics does not lock the table, it's like running multiple queries against it. [#invaplan]_
-       
+     
 Predicates: Equality before Inequality
 ======================================
 An index can be beneficial to your queries' performance when there is some sort of filtering that can be handled efficiently by the index.
@@ -244,7 +244,7 @@ You can add them with a simple trick:
    :linenos:
  
    CREATE INDEX index_name
-     ON table_name ( nullable_col_name, 1 );
+     ON tab_name ( nullable_col_name, 1 );
  
 The 'trick' is of course nothing but a function-based index.
 By adding nulls to your (function-based) index, you ensure that Oracle is able to avoid full table scans when you ask for ``col_name IS NULL`` .
@@ -291,7 +291,95 @@ They are created like normal columns but with the syntax of ``col_name [ data_ty
 An index on a virtual column is like a function-based index on a normal column, but it has the benefit that you can add the ``NOT NULL`` constraint to it.
 Hence, the optimizer can treat the expression as a ``NOT NULL``-preserving function.
 Sweet!
+
+Predicates: The ``WHERE`` clause
+================================
+The ``WHERE`` clause is the one that determines whether or not indexes can be used efficiently.
+One side of each predicate must be as specified in the index(es) for Oracle to be able to use any index.
+Whether it is the left-hand side or the right-hand side is irrelevant, although typically it is the left-hand side because SQL is written from the left to the right.
+Note that the order sometimes matters though: ``col_name LIKE 'ABC%'`` is not the same as ``'ABC%' LIKE col_name``.
+The former searches for ``col_name`` entries that begin with ``ABC``, whereas the latter is the same as the filter ``col_name = 'ABC%'``, that is the ``%`` is not interpreted as a wild card at all.
  
+Indexes can only be used when predicates are sargable, or search-argument-able, which admittedly is a horrible phrase.
+Functions on columns in the index can prohibit index use, particularly when the index is not a function-based index.
+Apart from that, some operators are sargable and optimizable (i.e. allow the use of an index): ``=``, ``<``, ``>``, ``>=`` ``IS NULL``; some operators are sargable yet not optimizable: ``<>`` and its equivalents (i.e. ``!=`` and ``^=``) and ``NOT``; and ``LIKE`` with a leading wild card is not sargable and hence not optimizable.
+Sargable predicates can be pushed down, which means that a predicate in a statement that references a view or derived table can be 'pushed down' to the view or derived table itself, which avoids having to scan the entire underlying data structure only to filter out a few relevant rows later.
+Sargable, non-optimizable predicates can still benefit from the optimizer's efforts; non-sargable predicates cannot though.
+ 
+A SQL statement that links several sargable predicates with an ``OR`` cannot be optimized when the predicates involve different columns.
+If, however, the predicates can be rewritten as an equivalent ``IN`` list, which Oracle does internally as a part of its predicate transformations, then Oracle can indeed optimize the statement and therefore utilize existing indexes.
+ 
+Important is, as always, that the data type of each search term matches the data type of the indexed column or expression; it is best that you convert search terms on the right-hand side if necessary but leave the left-hand side as is.
+Unnecessary use of ``TO_CHAR()`` and ``TO_NUMBER()`` (on the left-hand side) is not only sloppy but it can hamper index use.
+The same goes for ``NVL()`` and the like.
+ 
+If you often encounter fixed expressions or formulas in your predicates, you can create function-based indexes on these expressions.
+Make sure that the columns referenced appear in the index in exactly the same way as they appear in the predicates, *and* make sure that the right-hand side does not contain the columns from the index: Oracle does not solve your equations for you.
+ 
+Predicates that are often badly coded include operations on dates.
+Yes, it is possible to create a function-based index on ``TRUNC ( expiration_date )`` and use same expression in the database.
+However, *all* predicates on the column ``expiration_date`` *must* include ``TRUNC()`` for Oracle to be able to use the index in all cases.
+A simple and elegant solution is to provide ranges, either with ``>= TO_DATE(...)`` and ``<= TO_DATE(...)`` or with ``BETWEEN TO_DATE(...) AND TO_DATE``, which is inclusive.
+Should you not want it to be inclusive subtract a minimal interval like so: ``TO_DATE(...) - INTERVAL '1' SECOND'``.
+
+Why not the literal ``1/86400`` or ``1/(24*60*60)``?
+Well, it may be easy for you to understand something like that because you wrote it (and perhaps added a comment), but it is not always easy to fathom such literals, especially if developers simplify their fractions as in ``7/10800``, which is 56 seconds by the way.
+The index may not care about how you write your literals but the other developers in the team do care.
+Let the code speak for itself!
+ 
+Since we're on the topic of dates: *never* write ``TO_CHAR ( expiration_date, 'YYYY-MM-DD' ) = '2014-01-01'``.
+Leave the ``DATE`` column as is and write ``expiration_date >= TO_DATE ( '2014-01-01','YYYY-MM-DD' ) AND expiration_date < TO_DATE ( '2014-01-01','YYYY-MM-DD' ) + INTERVAL '1' DAY`` instead. [#interval]_
+Yes, it's a bit more typing, but that way an index range scan can be performed and you do not need a function-based index.
+ 
+'But what if I need only products from the fridge that expire in February?'
+Since repetition is the mother of learning, here comes: specify ranges from the first day of February to the last day of February.
+ 
+'But I want to show the total number of products by the year and month of the expiration date.'
+You could use the ``EXTRACT ( YEAR FROM expiration_date )`` and similarly for the month, ``TRUNC( expiration_date, 'MM' )`` or ``TO_CHAR ( expiration_date, 'YYYY-MM' )``.
+However, since you are pulling in all data from the table, a full table scan really is your best option.
+Yes, you read that right: a full table scan is the best alternative; we'll say more about full table scans in a few moments.
+Furthermore, if you already have an index on ``expiration_date`` and it is stored in order (i.e. it is not a ``HASH`` index on a partitioned table), then the ``GROUP BY`` can make use of the index without any additional function-based indexes.
+ 
+The ``LIKE`` comparison operator is also often a cause for performance problems because applications tend to allow wild cards in strings, which means that a search condition à la ``WHERE col_name LIKE '%SOMETHING%'`` is not uncommon.
+Obviously, you cannot create a sensible index for a predicate like that.
+It is tantamount to asking a dictionary to provide you with a list of all possible sequences of characters in any position.
+ 
+The ``/*+INDEX(...)*/`` hint, as described by `Laurent Schneider`_, is — contrary to what is claimed by the said author — *not* always beneficial for predicates with leading and trailing wild cards, so be sure to try it out.
+An index is, however, used when such a predicate is specified with bind variables:
+ 
+.. code-block:: sql
+   :linenos:
+ 
+    VARIABLE l_like VARCHAR2(20);
+    EXEC :l_like := '%SOMETHING%';
+ 
+    SELECT
+      *
+    FROM
+      tab_name
+    WHERE
+      col_name LIKE :l_like;
+ 
+If you always look for things *ending* with a series of characters, such as ``LIKE '%ABC'`` you *can* use an index.
+Just create the index on ``REVERSE ( col_name )`` and reverse the string you are looking for itself, and voilà, it works: ``WHERE REVERSE ( col_name ) LIKE 'CBA%'``.
+ 
+To search in a case-insensitive manner you have to create a function-based index, say, ``UPPER(col_name)``.
+You could have gone with ``LOWER(col_name)`` and whatever you prefer is really up to you.
+All that matters is that you are thrifty and consistent: switching back and forth between ``UPPER()`` and ``LOWER()`` is a bad idea because the database has to maintain two indexes instead of one, and you really only need one index.
+Which function you choose for case-insensitive searches is irrelevant but document whichever you choose, so it is clear to all developers on the team.
+ 
+In an international setting you may want to use ``NLS_UPPER( col_name, 'NLS_SORT = ...' )``, so that for instance — for ``... = XGERMAN`` — ``ß`` and ``ss`` are seen as equivalent.
+The parameters ``NLS_SORT`` and ``NLS_COMP`` can be made case- or accent-insensitive by appending ``_CI`` or ``_AI`` to their `sort name values`_ respectively.
+The ``NLS_SORT`` parameter can be used to alter a session or the entire system.
+ 
+For purely linguistic rather than binary searches of text, you can set the system's or session's ``NLS_COMP = LINGUISTIC``.
+The performance of linguistic indexes can thus be improved: ``CREATE INDEX ix_col_name_ling on tab_name ( NLSSORT( col_name, 'NLS_SORT = FRENCH' ) )``, for French for example.
+ 
+We have already seen that with function-based indexes it is important to have the exact same expression save for irrelevant spaces.
+A functionally equivalent expression that is syntactically different prohibits the use of an index, so writing ``REGEXP_LIKE()`` in your ``WHERE`` clause when you have used ``INSTR()`` in the index means that the optimizer will ignore the index.
+ 
+For Oracle Database 11g there is a good book on `expert indexing`_, if you want to learn more about indexes.
+
 Full Table Scans
 ================
 Full table scans are often seen as a database's last resort: you only do them if you absolutely have to.
@@ -314,17 +402,52 @@ The ``OFFSET/FETCH`` or `row-limiting clause`_ has greatly simplified life for d
  
 .. code-block:: sql
    :linenos:
-   :emphasize-lines: 7,8
+   :emphasize-lines: 10,11
  
-   SELECT     manufacturer
-            , product
-                        , temperature
-                        , expiration_date
-   FROM       fridge
-   ORDER BY   expiration_date
-   OFFSET     5 ROWS
+   SELECT
+      manufacturer
+    , product
+    , temperature
+    , expiration_date
+   FROM
+      fridge
+   ORDER BY
+      expiration_date
+   OFFSET 5 ROWS
    FETCH NEXT 10 [ PERCENT ] ROWS ONLY  
    ;
+
+An issue that is often overlooked when it comes to the row-limiting clause is explained on `Markus Winand's Use The Index, Luke`_ page.
+We'll briefly cover the salient details, as it affects application and database performance.
+Suppose your users flip through pages of data and are allowed to insert rows at any position.
+The ``OFFSET`` clause can cause rows to show up twice: once on the previous page *before* the row was inserted and once on the current page *after* the row was inserted (on the previous page).
+Furthermore, ``OFFSET`` is implemented in a way that data below the ``OFFSET`` line needs to be fetched and sorted anyway.
+ 
+The solution to this conundrum is quite simple: keyset pagination: use the ``FETCH`` clause as before but replace the ``OFFSET`` clause with a ``WHERE`` clause that limits the result set to all rows whose key is before or after the identifier (key) of the row previously displayed.
+Whether you have to take ``>`` or ``<`` depends on how you sort and what direction the pagination runs in of course.
+An index on the columns in your ``WHERE`` clause, including the key, to aid the ``ORDER BY`` means that browsing back to previous pages does not slow your users down.
+ 
+With that in mind we can rewrite our query:
+ 
+.. code-block:: sql
+   :linenos:
+   :emphasize-lines: 9,12
+
+   SELECT
+      manufacturer
+    , product
+    , temperature
+    , expiration_date
+   FROM
+      fridge
+   WHERE
+      expiration_date < last_expiration_date_of_previous_page
+   ORDER BY
+      expiration_date
+   FETCH NEXT 10 [ PERCENT ] ROWS ONLY
+   ;
+ 
+Two major bummers of keyset pagination are that 1) you cannot jump to arbitrary pages because you need the values from the previous page and 2) no convenient bidirectional navigation is available because that would require you to reverse the ``ORDER BY`` and key comparison operator.
  
 Index-Organized Tables
 ======================
@@ -383,13 +506,19 @@ More information on default B-tree and other indexes is of course `provided by O
 .. _window or analytical functions: http://use-the-index-luke.com/sql/partial-results/window-functions
 .. _row-limiting clause: http://docs.oracle.com/database/121/SQLRF/statements_10002.htm#SQLRF55631
 .. _logical rowIDs: http://docs.oracle.com/database/121/CNCPT/indexiot.htm#CNCPT911
+.. _Markus Winand's Use The Index, Luke: http://use-the-index-luke.com/no-offset
 .. _Vivek Sharma: http://www.oracle.com/technetwork/articles/sharma-indexes-093638.html
 .. _Richard Foote: http://richardfoote.wordpress.com/2010/02/18/myth-bitmap-indexes-with-high-distinct-columns-blow-out
 .. _bitmap indexes on index-organized tables: http://docs.oracle.com/database/121/ADMIN/tables.htm#ADMIN11699
 .. _provided by Oracle: http://docs.oracle.com/database/121/ADMIN/indexes.htm#ADMIN11709
-
+.. _Laurent Schneider: http://laurentschneider.com/wordpress/2009/07/how-to-tune-where-name-likebc.html
+.. _sort name values: http://docs.oracle.com/database/121/NLSPG/applocaledata.htm#NLSPG593
+.. _expert indexing: http://www.apress.com/9781430237358
+ 
 .. rubric:: Notes
 
 .. [#invaplan] The ``DBMS_STATS.AUTO_INVALIDATE`` option can be used to ensure that Oracle does not invalidate all cursors immediately, which can cause a significant CPU spike. Instead, Oracle uses a rolling cursor invalidation based on internal heuristics.
 
 .. [#rebuild] The index clustering factor indicates the correlation between the index order and the table order; the optimizer takes the clustering factor into account for the ``TABLE ACCESS BY INDEX ROWID`` operation. A high ratio of leaf nodes marked for deletion to leaf nodes (> 0.20), a low value of percentage used (< 0.80), and a clustering factor (see ``DBA_INDEXES``) close to the number of rows (instead of the number of blocks) in the table (see ``DBA_SEGMENTS``) are indicators that your indexes may benefit from rebuilding. If the clustering index is close to the number of rows, then the rows are ordered randomly.
+
+.. [#interval] The ``INTERVAL`` function has one major disadvantage: ``SELECT TO_DATE ( '2014-01-31', 'YYYY-MM-DD' ) + INTERVAL '1' MONTH FROM dual`` leads ``ORA-01839: date not valid for month specified`` error. The function ``ADD_MONTHS()`` solves that problem.

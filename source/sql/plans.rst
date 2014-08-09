@@ -18,7 +18,7 @@ Once your SQL statement has passed both checks with flying colours, your stateme
 The hash value is based on the first `few hundred characters`_ of your statement, so hash collisions can occur, especially for long statements.
 
 You can find out the SQL ID and hash value of your SQL statement by querying ``v$sql``. 
-To make life easier it is often best to add a comment unique to your statement, for instance ``SELECT /* my_custom_comment */ select_list FROM table_name``.
+To make life easier it is often best to add a comment unique to your statement, for instance ``SELECT /* my_custom_comment */ select_list FROM tab_name``.
 Then you can simply look for your query from ``v$sql``:
 
 .. code-block:: sql

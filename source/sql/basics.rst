@@ -138,7 +138,7 @@ Other than that, your credibility as a developer might get a slight bump.
 * **Respect**.
   No, you don't have to get all Aretha Franklin over your database, but you have to respect data types.
   Never rely on implicit data type conversions, and always convince yourself that the data type you think applies, really does apply.
-  With a simple ``DESC table_name`` you can remove all doubt.
+  With a simple ``DESC tab_name`` you can remove all doubt.
   
   If you're not convinced, please take a look at the following example, which shows you what you get when you sort numerical-looking data that is actually stored as a string.
 
