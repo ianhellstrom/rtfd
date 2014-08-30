@@ -292,7 +292,7 @@ An index on a virtual column is like a function-based index on a normal column, 
 Hence, the optimizer can treat the expression as a ``NOT NULL``-preserving function.
 Sweet!
 
-Predicates: The ``WHERE`` clause
+Predicates: The ``WHERE`` Clause
 ================================
 The ``WHERE`` clause is the one that determines whether or not indexes can be used efficiently.
 One side of each predicate must be as specified in the index(es) for Oracle to be able to use any index.
@@ -328,7 +328,7 @@ The index may not care about how you write your literals but the other developer
 Let the code speak for itself!
  
 Since we're on the topic of dates: *never* write ``TO_CHAR ( expiration_date, 'YYYY-MM-DD' ) = '2014-01-01'``.
-Leave the ``DATE`` column as is and write ``expiration_date >= TO_DATE ( '2014-01-01','YYYY-MM-DD' ) AND expiration_date < TO_DATE ( '2014-01-01','YYYY-MM-DD' ) + INTERVAL '1' DAY`` instead. [#interval]_
+Leave the ``DATE`` column as is and write ``expiration_date >= TO_DATE ( '2014-01-01','YYYY-MM-DD' )`` and ``expiration_date < TO_DATE ( '2014-01-01','YYYY-MM-DD' ) + INTERVAL '1' DAY`` instead. [#interval]_
 Yes, it's a bit more typing, but that way an index range scan can be performed and you do not need a function-based index.
  
 'But what if I need only products from the fridge that expire in February?'
@@ -460,7 +460,7 @@ However, accessing an index-organized table via a secondary index is very ineffi
 The reason is that the secondary index cannot have pointers to rows in the table because that would require the data to stay where it is.
 Forever.
 Because the data is organized by the primary index in an index-organized table, it can move around whenever data in modified.
-Secondary indexes store logical instead of physical rowIDs; `logical rowIDs`_ contain physical guesses, which identify the block of the row at the time when the secondary index was created or rebuilt.
+Secondary indexes store logical instead of physical rowIDs; `logical rowIDs`_ (``UROWID``) contain physical guesses, which identify the block of the row at the time when the secondary index was created or rebuilt.
 Standard heap tables are generally best for tables that require multiple indexes.
  
 Index-organized tables can be beneficial to OLTP applications where fast primary-key access is essential; inserts typically take longer for index-organized tables.
