@@ -11,3 +11,5 @@ SQL
 .. include:: sql/indexes.rst
 
 .. include:: sql/subqueries.rst
+
+.. include:: sql/joins.rst
