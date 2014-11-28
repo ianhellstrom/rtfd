@@ -160,7 +160,7 @@ The number of rounded up and shown in the column ``CARDINALITY``.
 
 What can (negatively) impact the accuracy of the estimate and therefore the quality of the execution plan are i) data skew, ii) multiple single-column predicates on a single table, iii) function-wrapped columns in  ``WHERE`` clause predicates, and iv) complex expressions.
 
-Interestingly, you can see runtime cardinality information by using the ``/*+GATHER_PLAN_STATISTICS*/`` hint in your query, after which you have to execute ``SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'ALLSTATS LAST'))``.
+Interestingly, you can see runtime cardinality information by using the ``/*+ gather_plan_statistics */`` hint in your query, after which you have to execute ``SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'ALLSTATS LAST'))``.
 The result shows you the estimated number of rows (``E-Rows``) and the actual number of rows (``A-Rows``), which can of course be quite different because of data skew.
 Don't use this hint in a production environment as each query incurs some overhead.
 
@@ -184,7 +184,7 @@ Oracle has a bunch of access methods in its arsenal:
   * the query is not selective, so that a large portion of the rows must be accessed;
   * the cost of a full table scan is the lowest because the table is small, in particular the number of formatted blocks under the high water mark is smaller than ``DB_FILE_MULTIBLOCK_READ_COUNT``;
   * the table has a high degree of parallelism, which makes the optimizer biased towards full table scans;
-  * the query uses the ``/*+FULL*/`` hint.
+  * the query uses the ``/*+ full */`` hint.
     
 * In a **table access by rowID**, Oracle looks up each selected row of a heap-organized table based on its rowID, which specifies the data file, the data block within that file, and the location of the row within that block.
   The rowID is obtained either from the ``WHERE`` clause predicate or through an index scan.
@@ -214,7 +214,7 @@ Oracle has a bunch of access methods in its arsenal:
     
   There is also an **index range scan descending**, which is basically the same beast; the only difference is that the rows are returned in descending order.
   The reason Oracle scans the index in descending rather than ascending order is because either the query has an ``ORDER BY ... DESC`` clause or the predicates on a key with a value less than instead of equal to or greater than a given value are specified.
-  Another (obvious) cause is the ``/*+INDEX_DESC(...)*/`` hint.
+  Another (obvious) cause is the ``/*+ index_desc(...) */`` hint.
 
 * If the entire index is read in order, then we are dealing with an **full index scan**.
   A full index scan does not read every block in the index though.

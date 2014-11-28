@@ -9,3 +9,5 @@ SQL
 .. include:: sql/plans.rst
 
 .. include:: sql/indexes.rst
+
+.. include:: sql/subqueries.rst

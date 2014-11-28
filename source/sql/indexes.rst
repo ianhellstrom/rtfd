@@ -344,7 +344,7 @@ The ``LIKE`` comparison operator is also often a cause for performance problems 
 Obviously, you cannot create a sensible index for a predicate like that.
 It is tantamount to asking a dictionary to provide you with a list of all possible sequences of characters in any position.
  
-The ``/*+INDEX(...)*/`` hint, as described by `Laurent Schneider`_, is — contrary to what is claimed by the said author — *not* always beneficial for predicates with leading and trailing wild cards, so be sure to try it out.
+The ``/*+ index(...) */`` hint, as described by `Laurent Schneider`_, is — contrary to what is claimed by the said author — *not* always beneficial for predicates with leading and trailing wild cards, so be sure to try it out.
 An index is, however, used when such a predicate is specified with bind variables:
  
 .. code-block:: sql
