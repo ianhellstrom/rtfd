@@ -227,7 +227,6 @@ Take a look at the following SQL statement:
 The execution plan for the statement with the ``ORDER BY`` in the subquery factor reads (on 12c):
 
 .. code-block:: none
-   :linenos:
    :emphasize-lines: 7
  
     -----------------------------------------------------------------------------------------
@@ -245,7 +244,6 @@ The execution plan for the statement with the ``ORDER BY`` in the subquery facto
 For the statement *without* the unnecessary sorting it is (again on 12c):
 
 .. code-block:: none
-   :linenos:
  
     ----------------------------------------------------------------------------------------
     | Id  | Operation                       | Name | Rows  | Bytes | Cost (%CPU)| Time     |
