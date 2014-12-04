@@ -73,7 +73,7 @@ If you can recall our :ref:`example <sql-proc-order>` of the robot, the beer, an
 If we equip our robot with Oracle's query optimizer, the robot will not simply walk to the kitchen, find the items by searching for them, and then return with our refreshments, but try to do it as efficiently as possible.
 It will modify our query without altering the query's function (i.e. fetch you some booze and a few nibbly bits), and explore its options when it comes to retrieving the items from the kitchen.
 For instance, if we happen to have a smart fridge with a display on the door that shows where all bottles are located, including the contents, temperature, and size of each bottle, the robot does not have to rummage through decaying fruit and vegetables at the bottom in the hope that a bottle is located somewhere underneath the rubbish.
-Instead it can look up the drinks (from an index) and fetch the bottles we want by removing them from the spots highlighted on the display (by rowID).
+Instead it can look up the drinks (from an index) and fetch the bottles we want by removing them from the spots highlighted on the display (by ROWID).
 What the optimizer can also figure out is whether it is more advantageous to grab the beers and then check the pantry, or the other way round (join order).
 If the robot has to go down a few steps to obtain crisps while still holding the beer in its hands, the optimizer may decide that carrying the heavy and/or many beverages may be inefficient.
 Furthermore, it may decide to pick up a tray and place the products it has already extracted on it (temporary table) while continuing its search for the remaining items.
@@ -160,7 +160,7 @@ The number of rounded up and shown in the column ``CARDINALITY``.
 
 What can (negatively) impact the accuracy of the estimate and therefore the quality of the execution plan are i) data skew, ii) multiple single-column predicates on a single table, iii) function-wrapped columns in  ``WHERE`` clause predicates, and iv) complex expressions.
 
-Interestingly, you can see runtime cardinality information by using the ``/*+ gather_plan_statistics */`` hint in your query, after which you have to execute ``SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'ALLSTATS LAST'))``.
+Interestingly, you can see runtime cardinality information by using the ``GATHER_PLAN_STATISTICS`` hint in your query, after which you have to execute ``SELECT * FROM table(DBMS_XPLAN.DISPLAY_CURSOR(FORMAT=>'ALLSTATS LAST'))``.
 The result shows you the estimated number of rows (``E-Rows``) and the actual number of rows (``A-Rows``), which can of course be quite different because of data skew.
 Don't use this hint in a production environment as each query incurs some overhead.
 
@@ -184,11 +184,11 @@ Oracle has a bunch of access methods in its arsenal:
   * the query is not selective, so that a large portion of the rows must be accessed;
   * the cost of a full table scan is the lowest because the table is small, in particular the number of formatted blocks under the high water mark is smaller than ``DB_FILE_MULTIBLOCK_READ_COUNT``;
   * the table has a high degree of parallelism, which makes the optimizer biased towards full table scans;
-  * the query uses the ``/*+ full */`` hint.
+  * the query uses the ``FULL`` hint.
     
-* In a **table access by rowID**, Oracle looks up each selected row of a heap-organized table based on its rowID, which specifies the data file, the data block within that file, and the location of the row within that block.
-  The rowID is obtained either from the ``WHERE`` clause predicate or through an index scan.
-  If the execution plan shows a line ``TABLE ACCESS BY INDEX ROWID BATCHED`` it means that Oracle retrieves a bunch of rowIDs from the index and then tries to access rows in block order to reduce the number of times each block needs to be accessed.
+* In a **table access by ROWID**, Oracle looks up each selected row of a heap-organized table based on its ROWID, which specifies the data file, the data block within that file, and the location of the row within that block.
+  The ROWID is obtained either from the ``WHERE`` clause predicate or through an index scan.
+  If the execution plan shows a line ``TABLE ACCESS BY INDEX ROWID BATCHED`` it means that Oracle retrieves a bunch of ROWIDs from the index and then tries to access rows in block order to reduce the number of times each block needs to be accessed.
 
 * The ``SAMPLE`` and ``SAMPLE_BLOCK`` clauses (with a sample percentage below 100%) cause a **sample table scan**, which fetches a random sample of data from a heap-organized table. 
   Note that block sampling is only possible during full table scans or index fast scans.
@@ -199,8 +199,8 @@ Oracle has a bunch of access methods in its arsenal:
 
 * An **index range scan** scans values in order.
   By default, Oracle stores and scans indexes and index-organized tables in ascending order.
-  Oracle accesses adjacent index entries and uses the rowID values to retrieve the rows in ascending order.
-  If multiple index entries happen to have the same keys, Oracle returns the entries in ascending order by rowID.
+  Oracle accesses adjacent index entries and uses the ROWID values to retrieve the rows in ascending order.
+  If multiple index entries happen to have the same keys, Oracle returns the entries in ascending order by ROWID.
   
   The database chooses an index range scan if the leading columns of a *non-unique* index are specified in the ``WHERE`` clause or if the leading columns of a *unique* index have ranges rather than single values specified.
   Oracle navigates from the root blocks to the branch blocks where it reads the maximum values of the leading edge in the index for each leaf block that the branch blocks refer to.
@@ -208,13 +208,13 @@ Oracle has a bunch of access methods in its arsenal:
   The advantage of the index unique scan is that Oracle does not have to visit the leaf blocks at all, because once it has found its match it is done.
   Not so with the index range scan.
   
-  A common gripe with the index range scan is in combination with the table access by rowID method, especially if the index range scan includes filter predicates instead of mere access predicates.
-  Filter predicates in conjunction with index range scans and tables access by rowID can cause scalability issues, as the entire leaf node chain has to be accessed, read, and filtered.
+  A common gripe with the index range scan is in combination with the table access by ROWID method, especially if the index range scan includes filter predicates instead of mere access predicates.
+  Filter predicates in conjunction with index range scans and tables access by ROWID can cause scalability issues, as the entire leaf node chain has to be accessed, read, and filtered.
   As more and more data is inserted, the time to access, read, and filter the data increases too.
     
   There is also an **index range scan descending**, which is basically the same beast; the only difference is that the rows are returned in descending order.
   The reason Oracle scans the index in descending rather than ascending order is because either the query has an ``ORDER BY ... DESC`` clause or the predicates on a key with a value less than instead of equal to or greater than a given value are specified.
-  Another (obvious) cause is the ``/*+ index_desc(...) */`` hint.
+  Another (obvious) cause is the ``INDEX_DESC`` hint.
 
 * If the entire index is read in order, then we are dealing with an **full index scan**.
   A full index scan does not read every block in the index though.
@@ -246,7 +246,7 @@ Oracle has a bunch of access methods in its arsenal:
   Index blocks that do not meet the filter condition on the non-leading column are immediately skipped, hence the name. 
   An index skip scan can of course only be efficient if the non-leading columns are highly selective.
  
-* An **index join scan** is performed if all data can be retrieved from a combination of multiple indexes, which are hash-joined on the rowIDs.
+* An **index join scan** is performed if all data can be retrieved from a combination of multiple indexes, which are hash-joined on the ROWIDs.
   Because all data is available in the indexes, no table access is needed.
 
   An index join is often more expensive than simply scanning the most selective index and subsequently probing the table.
@@ -254,8 +254,8 @@ Oracle has a bunch of access methods in its arsenal:
   
 * Whereas in traditional B-tree indexes each entry point refers to exactly one row, a bitmap index's entry points refer to multiple rows.
   That is, each index key stores pointers to multiple rows. 
-  Each bit corresponds to a possible rowID; if the bit is set, then the row with the corresponding rowID contains the key's value.
-  The bit position is converted to an actual rowID by a mapping function.
+  Each bit corresponds to a possible ROWID; if the bit is set, then the row with the corresponding ROWID contains the key's value.
+  The bit position is converted to an actual ROWID by a mapping function.
   Internally, Oracle stores the bitmap index in a B-tree structure for quick searching.
   
   Bitmaps are frequently used in data warehousing (OLAP) environments, where ad hoc queries are commonplace.
@@ -267,7 +267,7 @@ Oracle has a bunch of access methods in its arsenal:
   Back to business.
   If the predicate on a bitmap-indexed column contains an equality operator, the query optimizer considers the **bitmap index single value** access path to look up a single key value.
   A single bitmap is scanned for all positions containing a value of ``1``.
-  All matching values are converted into rowIDs, which in turn are used to find the corresponding rows.
+  All matching values are converted into ROWIDs, which in turn are used to find the corresponding rows.
 
 * A B-tree index can have an index range scan for ranges of values specified in the ``WHERE`` clause.
   Its counterpart for bitmap indexes is the **bitmap index range scan**.
@@ -291,6 +291,8 @@ Oracle has a bunch of access methods in its arsenal:
   A **hash scan** is used to locate rows based on a hash value of the key in a hash cluster.
   A disadvantage of hash clusters is the absence of range scans on cluster keys that are not in the index, in which case a full table scan must be performed.
 
+.. _sql-join-methods:
+
 Join Methods
 ------------
 Join methods refer to the way in which two row sources are joined with each other.
@@ -310,19 +312,19 @@ The join method dictates to a large degree the cost of joins:
 
 * A **nested loop join** is typically used when small subsets of tables are joined or if there is an efficient way of accessing the inner table, for example with an index lookup.
   For every row selected from the outer table, the database scans *all* rows of the inner table.
-  If there is an index on the inner table, then it can be used to access the inner data by rowID.
+  If there is an index on the inner table, then it can be used to access the inner data by ROWID.
   
   The database can read several rows from the outer row source in a batch, which is typically part of an `adaptive plan`_.
 
-  It is not uncommon to see two nested loops in the execution plan (as of 11g) because Oracle batches multiple I/O requests and process these with a vector I/O, which means that a set of rowIDs is sent to the requesting operating system in an array.
+  It is not uncommon to see two nested loops in the execution plan (as of 11g) because Oracle batches multiple I/O requests and process these with a vector I/O, which means that a set of ROWIDs is sent to the requesting operating system in an array.
   What Oracle does with two nested loops is basically the following:
   
   #. Iterate through the inner nested loop to obtain the requested outer source rows.
   #. Cache the data in the `PGA`_.
-  #. Find the matching rowID from the inner loop's inner row source.
+  #. Find the matching ROWID from the inner loop's inner row source.
   #. Cache the data in the PGA.
-  #. Organize the rowIDs for more efficient access in the cache.
-  #. Iterate through the outer loop to retrieve the data based on the cached rowIDs; the result set of the inner loop becomes the outer row source of the outer nested loop. 
+  #. Organize the ROWIDs for more efficient access in the cache.
+  #. Iterate through the outer loop to retrieve the data based on the cached ROWIDs; the result set of the inner loop becomes the outer row source of the outer nested loop. 
 
 * A **sort-merge join** is done when join conditions are inequalities (i.e. not an equijoin).
   It is commonly chosen if there is an index on one of the tables that eliminates a sort operation.
@@ -342,19 +344,19 @@ The join method dictates to a large degree the cost of joins:
   This join method is, however, very rare in production environments.
 
 Partial join evaluation is available from Oracle Database 12c onwards.
-It allows joined rows that would otherwise have to be eliminated by a ``SORT UNIQUE`` operation to be removed during the execution of the join an inner join or semijoin instead.
+It allows joined rows that would otherwise have to be eliminated by a ``SORT UNIQUE`` operation to be removed during the execution of the join an inner join or semi-join instead.
 This optimization affects ``DISTINCT``, ``MIN()``, ``MAX()``, ``SUM(DISTINCT)``, ``AVG(DISTINCT)``, ``COUNT(DISTINCT)`` , branches of ``UNION``, ``MINUS``, and ``INTERSECT`` operators, ``[ NOT ] EXISTS`` subqueries, and so on.
 For instance, a ``HASH JOIN > SORT UNIQUE`` is replaced by a ``HASH JOIN SEMI > HASH UNIQUE`` combo.
 
 Join Types
 ----------
 Join types are easier to explain because they are determined by what you have typed.
-There are four categories of join types: i) inner joins, ii) outer joins (left, right, and full), iii) semijoins, and iv) antijoins.
-Even though semijoins and antijoins are syntactically subqueries, the optimizer beats them until they accept their fate as joins.
+There are four categories of join types: i) inner joins, ii) outer joins (left, right, and full), iii) semi-joins, and iv) anti-joins.
+Even though semi-joins and anti-joins are syntactically subqueries, the optimizer beats them until they accept their fate as joins.
 
-Semijoins can occur when the statement contains an ``IN`` or ``EXISTS`` clause that is not contained in an ``OR`` branch.
-Analogously, antijoins are considered if the statement contains a ``NOT IN`` or ``NOT EXISTS`` clause that is not contained in an ``OR`` branch.
-Moreover, an antijoin can be used the statement includes an outer join and has ``IS NULL`` applied to a join column.
+Semi-joins can occur when the statement contains an ``IN`` or ``EXISTS`` clause that is not contained in an ``OR`` branch.
+Analogously, anti-joins are considered if the statement contains a ``NOT IN`` or ``NOT EXISTS`` clause that is not contained in an ``OR`` branch.
+Moreover, an anti-join can be used the statement includes an outer join and has ``IS NULL`` applied to a join column.
 
 Join Orders
 -----------
@@ -364,8 +366,8 @@ Cardinality estimates and access paths largely determine the overall cost of joi
 
 * Whenever a particular join results in at most one row (e.g. because of ``UNIQUE`` or ``PRIMARY KEY`` constraints) it goes first.
 * For outer joins, the row-preserving (outer) table comes after the other tables to ensure that all rows that do not satisfy the join condition can be added correctly.
-* When Oracle converts a subquery into an anti- or semijoin, the subquery's table(s) come after tables in the outer (connected/correlated) query block.
-  Hash antijoins and semijoins can sometimes override the ordering though.
+* When Oracle converts a subquery into an anti- or semi-join, the subquery's table(s) come after tables in the outer (connected/correlated) query block.
+  Hash anti-joins and semi-joins can sometimes override the ordering though.
 * If `view merging`_ is impossible, then all tables in the view are joined before joining the view to the tables outside the view.
 
 Partition Pruning

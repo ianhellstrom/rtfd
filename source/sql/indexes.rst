@@ -71,9 +71,9 @@ The **index unique scan** only returns one row because of a ``UNIQUE`` constrain
 Because of that, Oracle performs only the tree traversal: it goes from the branch node to the relevant leaf node and picks the source row it needs from the table.
  
 For an **index range scan** the tree is traversed but Oracle also needs to follow the leaf node chain to find all remaining matching entries. It could be that the next leaf node contains more rows of interest, for instance if you require the maximum value of the current leaf node; because only the maximum value of each leaf block is stored in the branch nodes, it is possible that the current leaf block's maximum index value 'spills over' to the next.
-A **table access by index rowID** often follows an index range scan.
+A **table access by index ROWID** often follows an index range scan.
 When there are many rows to fetch this combination can become a performance bottleneck, especially when many database blocks are involved.
-The cost the optimizer calculates for the table access by index rowID is strongly influenced by the row count estimates.
+The cost the optimizer calculates for the table access by index ROWID is strongly influenced by the row count estimates.
  
 As the name suggest, a **full index scan** reads the entire index in order.
 Similarly, a **fast full index scan** reads the entire index as stored on disk.
@@ -307,7 +307,7 @@ Sargable predicates can be pushed down, which means that a predicate in a statem
 Sargable, non-optimizable predicates can still benefit from the optimizer's efforts; non-sargable predicates cannot though.
  
 A SQL statement that links several sargable predicates with an ``OR`` cannot be optimized when the predicates involve different columns.
-If, however, the predicates can be rewritten as an equivalent ``IN`` list, which Oracle does internally as a part of its predicate transformations, then Oracle can indeed optimize the statement and therefore utilize existing indexes.
+If, however, the predicates can be rewritten as an equivalent ``IN``-list, which Oracle does internally as a part of its predicate transformations, then Oracle can indeed optimize the statement and therefore utilize existing indexes.
  
 Important is, as always, that the data type of each search term matches the data type of the indexed column or expression; it is best that you convert search terms on the right-hand side if necessary but leave the left-hand side as is.
 Unnecessary use of ``TO_CHAR()`` and ``TO_NUMBER()`` (on the left-hand side) is not only sloppy but it can hamper index use.
@@ -344,7 +344,7 @@ The ``LIKE`` comparison operator is also often a cause for performance problems 
 Obviously, you cannot create a sensible index for a predicate like that.
 It is tantamount to asking a dictionary to provide you with a list of all possible sequences of characters in any position.
  
-The ``/*+ index(...) */`` hint, as described by `Laurent Schneider`_, is — contrary to what is claimed by the said author — *not* always beneficial for predicates with leading and trailing wild cards, so be sure to try it out.
+The ``INDEX`` hint, as described by `Laurent Schneider`_, is — contrary to what is claimed by the said author — *not* always beneficial for predicates with leading and trailing wild cards, so be sure to try it out.
 An index is, however, used when such a predicate is specified with bind variables:
  
 .. code-block:: sql
@@ -385,7 +385,7 @@ Full Table Scans
 Full table scans are often seen as a database's last resort: you only do them if you absolutely have to.
 That reputation of full table scans is not entirely warranted though.
  
-For small tables it often does not make sense for Oracle to read the associated index, search for the relevant rowIDs, and then fetch the data from the database tables when it can just as easily do a single round trip to the table.
+For small tables it often does not make sense for Oracle to read the associated index, search for the relevant ROWIDs, and then fetch the data from the database tables when it can just as easily do a single round trip to the table.
 Thanks to multiblock I/O in full table scans a couple of parallel round trips are also possible to speed up the process.
  
 Analogously, when the database has to return a sizeable portion of all the rows from a table, the index lookup is an overhead that does not always pay off.
@@ -460,7 +460,7 @@ However, accessing an index-organized table via a secondary index is very ineffi
 The reason is that the secondary index cannot have pointers to rows in the table because that would require the data to stay where it is.
 Forever.
 Because the data is organized by the primary index in an index-organized table, it can move around whenever data in modified.
-Secondary indexes store logical instead of physical rowIDs; `logical rowIDs`_ (``UROWID``) contain physical guesses, which identify the block of the row at the time when the secondary index was created or rebuilt.
+Secondary indexes store logical instead of physical ROWIDs; `logical ROWIDs`_ (``UROWID``) contain physical guesses, which identify the block of the row at the time when the secondary index was created or rebuilt.
 Standard heap tables are generally best for tables that require multiple indexes.
  
 Index-organized tables can be beneficial to OLTP applications where fast primary-key access is essential; inserts typically take longer for index-organized tables.
@@ -474,7 +474,7 @@ Beyond B-Trees: Bitmap Indexes
 For columns with low cardinality the classical B-tree index is not an optimal solution, at least not in DSS or OLAP environments.
 Bitmap indexes to the rescue!
  
-Bitmap indexes use compression techniques, which means that many rowIDs can be generated with very little I/O.
+Bitmap indexes use compression techniques, which means that many ROWIDs can be generated with very little I/O.
 As argued by `Vivek Sharma`_ and `Richard Foote`_, a bitmap index is not only your go-to index for low-cardinality columns but also for any data that does not change frequently, for instance fact tables in data warehouses.
 Nevertheless, concurrent IUD operations clearly tip the scales in favour of standard B-tree indexes; bitmap indexes are problematic for online applications with many concurrent DML statements because of deadlocks and the overhead to maintain bitmap indexes.
  
@@ -505,7 +505,7 @@ More information on default B-tree and other indexes is of course `provided by O
 .. _roundabout methods: http://www.oracle-base.com/articles/12c/row-limiting-clause-for-top-n-queries-12cr1.php
 .. _window or analytical functions: http://use-the-index-luke.com/sql/partial-results/window-functions
 .. _row-limiting clause: http://docs.oracle.com/database/121/SQLRF/statements_10002.htm#SQLRF55631
-.. _logical rowIDs: http://docs.oracle.com/database/121/CNCPT/indexiot.htm#CNCPT911
+.. _logical ROWIDs: http://docs.oracle.com/database/121/CNCPT/indexiot.htm#CNCPT911
 .. _Markus Winand's Use The Index, Luke: http://use-the-index-luke.com/no-offset
 .. _Vivek Sharma: http://www.oracle.com/technetwork/articles/sharma-indexes-093638.html
 .. _Richard Foote: http://richardfoote.wordpress.com/2010/02/18/myth-bitmap-indexes-with-high-distinct-columns-blow-out

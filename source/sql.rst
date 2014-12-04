@@ -13,3 +13,5 @@ SQL
 .. include:: sql/subqueries.rst
 
 .. include:: sql/joins.rst
+
+.. include:: sql/hints.rst

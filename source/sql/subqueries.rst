@@ -27,15 +27,15 @@ Nested and correlated subqueries show up in the ``WHERE``  clause of a SQL state
 Whereas a scalar subquery returns one row and one column, a single-row subquery returns one row but multiple columns, and a multi-row subquery returns multiple rows and multiple columns.
 Whenever the subquery does not reference columns from the outer query, we speak of a nested subquery, otherwise it is called a correlated subquery.
  
-For multi-row nested subqueries it is important to note that the ``ANY``, ``ALL``, and ``SOME`` operators can sometimes be equivalent to ``IN`` lists, which is why they do not often show up in production code even though Oracle loves them at certification exams.
+For multi-row nested subqueries it is important to note that the ``ANY``, ``ALL``, and ``SOME`` operators can sometimes be equivalent to ``IN``-lists, which is why they do not often show up in production code even though Oracle loves them at certification exams.
 For instance, ``WHERE col_name = ANY ( ... )`` is equivalent to ``WHERE col_name IN ( ... )``, and ``WHERE col_name <> ALL ( ... )`` is exactly the same as ``WHERE col_name NOT IN ( ... )``, where the ellipsis indicates any valid, nested multi-row subquery.
 In fact, `Oracle already does some of these transformations`_ (and more) automatically.
  
 Indexes are primarily used in the filters of the ``WHERE`` clause, as we have discussed before.
 This includes predicates with nested or correlated subqueries too.
-As such it is often advantageous to rewrite ``NOT EXISTS`` (antijoin) as ``EXISTS`` (semijoin) because it allows Oracle to use an index.
+As such it is often advantageous to rewrite ``NOT EXISTS`` (anti-join) as ``EXISTS`` (semi-join) because it allows Oracle to use an index.
  
-Related to the topic of semijoins is whether there is any difference among the following three options that are commonly found in code:
+Related to the topic of semi-joins is whether there is any difference among the following three options that are commonly found in code:
  
 * ``WHERE EXISTS (SELECT * FROM tab_name ...)``,
 * ``WHERE EXISTS (SELECT 1 FROM tab_name ...)``,
@@ -59,7 +59,7 @@ Some heuristic transformations are really no-brainers because they cannot impact
  
 * ``COUNT`` conversion: whenever a ``COUNT(*)`` is equivalent to a ``COUNT(col_not_null)`` Oracle can use a ``BITMAP CONVERSION COUNT`` to speed up the SQL statement.
 * ``DISTINCT`` is eliminated whenever Oracle knows the operation is redundant, for instance when all columns of a primary key are involved.
-* Columns in a ``SELECT`` list of a subquery are removed whenever they are not referenced, which is known as select list pruning.
+* Columns in a ``SELECT``-list of a subquery are removed whenever they are not referenced, which is known as select-list pruning.
 * Filters can be pushed down into subqueries when appropriate, so that the amount of data is minimized as soon as possible.
 * Predicates can also be moved around from one subquery to another whenever an inner or natural join of two (or more) query blocks is performed where only one of the blocks has a particular predicate, but transitive closure guarantees that is also applies to the other subqueries.
   Aggregations and analytic functions are known to throw a spanner in the works for filter push-downs and predicate move-arounds.
@@ -82,19 +82,19 @@ With it, it has a whole array of access paths and join options it can go through
 When you execute ``SELECT * FROM dual WHERE 0 NOT IN (NULL)`` you will receive no rows, as expected.
 After all, null may be 0, it may not be.
 Before Oracle Database 11g, a column that could be null would prevent Oracle from unnesting the subquery.
-With the null-aware antijoin in 11g and above this is no longer the case, and Oracle can unnest such subqueries.
+With the null-aware anti-join in 11g and above this is no longer the case, and Oracle can unnest such subqueries.
  
-As of Oracle Database 12c there is the so-called null-accepting semijoin, which extends the semijoin algorithm, indicated by ``SEMI NA`` in the execution plan.
+As of Oracle Database 12c there is the so-called null-accepting semi-join, which extends the semi-join algorithm, indicated by ``SEMI NA`` in the execution plan.
 This is relevant for correlated subqueries that have a related ``IS NULL`` predicate, like so: ``WHERE col_name IS NULL OR EXISTS ( SELECT 1 FROM ... )``
-The null-accepting semijoin checks for null columns in the join column of the table on the left-hand side of the join.
-If it is null, the corresponding row is returned, otherwise a semijoin is performed.
+The null-accepting semi-join checks for null columns in the join column of the table on the left-hand side of the join.
+If it is null, the corresponding row is returned, otherwise a semi-join is performed.
  
 So, you may be wondering, 'If Oracle already unnests correlated subqueries, is there any reason to use correlated subqueries instead of joins?'
 
 A correlated subquery is perfectly acceptable when your outer query already filters heavily and the correlated subquery is used to find corresponding matches.
 This often happens when you do a simple lookup, typically in a PL/SQL (table) function in an API.
  
-Beware of nulls in the subquery of antijoins though: whenever one or more rows return a null, you won't see any results.
+Beware of nulls in the subquery of anti-joins though: whenever one or more rows return a null, you won't see any results.
 A predicate such as ``col_name NOT IN (NULL, ...)`` always evaluates to null.
 Analogously, it is important that you inform Oracle of nulls, or the absence thereof, in case you decide to explicitly rewrite a nested or correlated subquery as a join, as it may assist Oracle in determining a better execution plan.
 Remember: the more information the optimizer has, the better its decisions.
@@ -177,7 +177,7 @@ It takes the first character of each ``col_name``, which means that ``'Jack'`` a
  
 So, when you *know* that the function you apply is a bijection, then you can rewrite your original query in the format that typically runs faster.
  
-Sometimes you can even avoid a ``DISTINCT`` (with the associated costly sort operation) in a main query's ``SELECT`` list altogether by opting for a semijoin (i.e. ``EXISTS``) instead.
+Sometimes you can even avoid a ``DISTINCT`` (with the associated costly sort operation) in a main query's ``SELECT``-list altogether by opting for a semi-join (i.e. ``EXISTS``) instead.
 This is common when you want unique entries from the main table but only when there is a match in another table for which there are multiple rows for one original row, that is, there is a one-to-many relationship from the main to the other (subquery) table.
  
 Inline Views and Factored Subqueries
@@ -194,7 +194,7 @@ A detailed example is provided by Ian Hellström on `Databaseline`_ for the mult
  
 Before the advent of factored subqueries, developers were often told that `global temporary tables`_ were the cure for bad subquery performance.
 That is no longer the case because either Oracle already materializes the factored subquery or you can force Oracle do to so with ``/*+ materialize */``.
-Similarly, you can provide the hint ``/*+ cache */``, so that Oracle caches the factored subquery, which can improve performance when the SQL statement accesses the factored subquery more than once.
+Similarly, you can provide the hint ``/*+ CACHE */``, so that Oracle caches the factored subquery, which can improve performance when the SQL statement accesses the factored subquery more than once.
 As of Oracle Database 12c, there is a session variable ``temp_undo_enabled`` that allows you to `use the TEMP rather than the UNDO tablespace`_ for temporary tables, materializations, and factored subqueries.
  
 The only reason you may *not always* want to use factored subqueries is that in certain DML statements only inline views are permitted.
@@ -262,9 +262,9 @@ Oracle does have a so-called ``ORDER BY`` elimination that removes unnecessary s
 Such an elimination typically occurs when Oracle detects post-sorting joins or aggregations that would mess up the order anyway.
 Important to note is that said elimination procedure does *not* apply to factored subqueries, which is why the ``SORT ORDER BY`` operation shows up in the execution plan above!
  
-You can have fun with the order-by-elimination by enabling/disabling it with the hints ``eliminate_oby``/``no_eliminate_oby``.
+You can have fun with the order-by-elimination by enabling/disabling it with the hints ``ELIMINATE_OBY``/``NO_ELIMINATE_OBY``.
 Again, please observe that this fiddling around with these hints only applies to inline views.
-Similarly, you can use the ``no_query_transformation`` hint to disable *all* query transformations, as described by the authors in `Pro Oracle SQL`_ (pp. 45-46).
+Similarly, you can use the ``NO_QUERY_TRANSFORMATION`` hint to disable *all* query transformations, as described by the authors in `Pro Oracle SQL`_ (pp. 45-46).
  
 .. _Subqueries: http://docs.oracle.com/database/121/SQLRF/queries007.htm#SQLRF52357
 .. _Tanel Poder: http://blog.tanelpoder.com/2013/08/13/oracle-12c-scalar-subquery-unnesting-transformation
