@@ -9,3 +9,4 @@ Oracle SQL and PL/SQL Optimization for Developers
 
    intro
    sql
+   plsql
