@@ -309,7 +309,7 @@ For example, you can force Oracle to perform the bushy join ( T1 → T2 ) → ( 
  
 .. code-block:: sql
    :linenos:
-   :emphasize-lines: 7-14,16-24
+   :emphasize-lines: 6-14,16-24
  
    SELECT /* LEADING ( v12 v34 )
              USE_HASH( v34 )
