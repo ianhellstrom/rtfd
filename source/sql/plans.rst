@@ -231,12 +231,12 @@ Oracle has a bunch of access methods in its arsenal:
   The query optimizer estimates whether it is cheaper to scan the index (full index scan) or table itself (full table scan); for index-organized tables the table and index are of course one and the same.
   
 * A **fast full index scan** reads index blocks as they exist on disk.
-  The index (entries on the leaf blocks) rather than the table is read in multiblock I/O mode.
+  The index (entries on the leaf blocks) rather than the table is read in multi-block I/O mode.
   
   Oracle looks at a this access path whenever a query only asks for attributes in the index.
   It's an alternative to a full table scan when the index contains all columns needed for the query, and at least one column in the index key has a ``NOT NULL`` constraint.
   
-  Because the index is not read in order (because of the multiblock I/O), a sort operation cannot be eliminated as with the full index scan.
+  Because the index is not read in order (because of the multi-block I/O), a sort operation cannot be eliminated as with the full index scan.
 
 * For queries with predicates on all but the leading column of a composite index, an **index skip scan** is a possibility.
   The index skip scan is also an option if the leading column has few distinct values.
