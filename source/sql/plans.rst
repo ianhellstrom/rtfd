@@ -120,7 +120,7 @@ Similarly, you can execute ``EXPLAIN PLAN FOR your_query;`` and then run
           DBMS_XPLAN.DISPLAY
             (
                'plan_table'  -- default plan table name
-              , NULL,        -- NULL to show last statement inserted into plan table
+              , NULL         -- NULL to show last statement inserted into plan table
               , 'all'        -- show all available metrics
             )
         );

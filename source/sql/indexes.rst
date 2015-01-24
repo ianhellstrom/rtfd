@@ -201,9 +201,9 @@ For most databases that is a bit too iffy to be useful advice.
 Another reason why the equality-range index is a good rule of thumb is that whatever is searched for with an equality predicate is something that is pretty much standard to all your queries: you primarily want certain stuff from the fridge, where the temperature is only secondary.
 "I'm starving for some 7-degrees' produce," is not something you often hear people say when they're thirsty but have no cool liquids available; you might want to gobble up some cool broccoli instead but I doubt it.
  
-If our fridge table is equipped with expiration dates, that column would also be included as a second or third column.
-We're typically interested in items that have not yet expired (``expiration_date <= SYSDATE``), or, if we want to have the robot clean up the fridge, all items that have already expired.
-Whether the temperature or expiration date should go first *after* the product depends a bit on the situation: do you search more frequently for the expiration date or the temperature of items in the fridge?
+If our fridge table is equipped with expiry dates, that column would also be included as a second or third column.
+We're typically interested in items that have not yet expired (``expiry_date <= SYSDATE``), or, if we want to have the robot clean up the fridge, all items that have already expired.
+Whether the temperature or expiry date should go first *after* the product depends a bit on the situation: do you search more frequently for the expiry date or the temperature of items in the fridge?
  
 Anyway, when you need an index on additional columns, add these to the index you already have or redefine it.
 An extra index may not provide you with the benefits you expect: the optimizer has to combine two indexes when executing your queries, and the database has to maintain two indexes.
@@ -257,10 +257,10 @@ Similarly, ``LN ( EXP(col_real) )`` is not simplified to ``col_real`` for ``col_
 Oracle is smart but you cannot expect it to do everything for you: not even state-of-the-art computer algebra systems like Mathematica and Maple can simplify all crazy expressions you can think of.
  
 The power of function-based indexes lies in the fact that often your applications have to filter for bits and pieces of data that are already available but normal indexes cannot be used, which often happens because of conversion, mathematical, and string-manipulation functions, in particular ``SUBSTR()`` and  ``LOWER()`` or ``UPPER()``.
-Suppose you have a sudden, inexplicable urge to behave like a business analyst and you want to generate a report of the average temperature of all products with an expiration date of products in your fridge for a particular ISO workweek; if you think this is an odd request then please replace temperature with amount, expiration date with the date of the transaction, and the fridge with a sales table.
+Suppose you have a sudden, inexplicable urge to behave like a business analyst and you want to generate a report of the average temperature of all products with an expiry date of products in your fridge for a particular ISO workweek; if you think this is an odd request then please replace temperature with amount, expiry date with the date of the transaction, and the fridge with a sales table.
 
-You create the following function-based index: ``CREATE INDEX ix_workweek ON fridge ( TO_CHAR(expiration_date, 'IW') )``.
-If you now use a clause like ``WHERE TO_CHAR(expiration_date, 'IW') = '20'``, you can see all products with an expiration date in workweek twenty using the index ``ix_workweek``; the single quotes in the ``WHERE`` clause are included because the resulting expression is of type ``VARCHAR2``.
+You create the following function-based index: ``CREATE INDEX ix_workweek ON fridge ( TO_CHAR(expiry_date, 'IW') )``.
+If you now use a clause like ``WHERE TO_CHAR(expiry_date, 'IW') = '20'``, you can see all products with an expiry date in workweek twenty using the index ``ix_workweek``; the single quotes in the ``WHERE`` clause are included because the resulting expression is of type ``VARCHAR2``.
 Avoid implicit conversions as much as possible; not because of the almost negligible conversion performance penalty but because you rely on Oracle to do it right in the background *and* it is considered bad style!
  
 Imagine you have created a function-based index on a certain concatenation of columns, for instance ``manufacturer || '''s ' || product``, then you can use that exact expression in the ``WHERE`` clause.
@@ -317,8 +317,8 @@ If you often encounter fixed expressions or formulas in your predicates, you can
 Make sure that the columns referenced appear in the index in exactly the same way as they appear in the predicates, *and* make sure that the right-hand side does not contain the columns from the index: Oracle does not solve your equations for you.
  
 Predicates that are often badly coded include operations on dates.
-Yes, it is possible to create a function-based index on ``TRUNC ( expiration_date )`` and use same expression in the database.
-However, *all* predicates on the column ``expiration_date`` *must* include ``TRUNC()`` for Oracle to be able to use the index in all cases.
+Yes, it is possible to create a function-based index on ``TRUNC ( expiry_date )`` and use same expression in the database.
+However, *all* predicates on the column ``expiry_date`` *must* include ``TRUNC()`` for Oracle to be able to use the index in all cases.
 A simple and elegant solution is to provide ranges, either with ``>= TO_DATE(...)`` and ``<= TO_DATE(...)`` or with ``BETWEEN TO_DATE(...) AND TO_DATE``, which is inclusive.
 Should you not want it to be inclusive subtract a minimal interval like so: ``TO_DATE(...) - INTERVAL '1' SECOND'``.
 
@@ -327,18 +327,18 @@ Well, it may be easy for you to understand something like that because you wrote
 The index may not care about how you write your literals but the other developers in the team do care.
 Let the code speak for itself!
  
-Since we're on the topic of dates: *never* write ``TO_CHAR ( expiration_date, 'YYYY-MM-DD' ) = '2014-01-01'``.
-Leave the ``DATE`` column as is and write ``expiration_date >= TO_DATE ( '2014-01-01','YYYY-MM-DD' )`` and ``expiration_date < TO_DATE ( '2014-01-01','YYYY-MM-DD' ) + INTERVAL '1' DAY`` instead. [#interval]_
+Since we're on the topic of dates: *never* write ``TO_CHAR ( expiry_date, 'YYYY-MM-DD' ) = '2014-01-01'``.
+Leave the ``DATE`` column as is and write ``expiry_date >= TO_DATE ( '2014-01-01','YYYY-MM-DD' )`` and ``expiry_date < TO_DATE ( '2014-01-01','YYYY-MM-DD' ) + INTERVAL '1' DAY`` instead. [#interval]_
 Yes, it's a bit more typing, but that way an index range scan can be performed and you do not need a function-based index.
  
 'But what if I need only products from the fridge that expire in February?'
 Since repetition is the mother of learning, here comes: specify ranges from the first day of February to the last day of February.
  
-'But I want to show the total number of products by the year and month of the expiration date.'
-You could use the ``EXTRACT ( YEAR FROM expiration_date )`` and similarly for the month, ``TRUNC( expiration_date, 'MM' )`` or ``TO_CHAR ( expiration_date, 'YYYY-MM' )``.
+'But I want to show the total number of products by the year and month of the expiry date.'
+You could use the ``EXTRACT ( YEAR FROM expiry_date )`` and similarly for the month, ``TRUNC( expiry_date, 'MM' )`` or ``TO_CHAR ( expiry_date, 'YYYY-MM' )``.
 However, since you are pulling in all data from the table, a full table scan really is your best option.
 Yes, you read that right: a full table scan is the best alternative; we'll say more about full table scans in a few moments.
-Furthermore, if you already have an index on ``expiration_date`` and it is stored in order (i.e. it is not a ``HASH`` index on a partitioned table), then the ``GROUP BY`` can make use of the index without any additional function-based indexes.
+Furthermore, if you already have an index on ``expiry_date`` and it is stored in order (i.e. it is not a ``HASH`` index on a partitioned table), then the ``GROUP BY`` can make use of the index without any additional function-based indexes.
  
 The ``LIKE`` comparison operator is also often a cause for performance problems because applications tend to allow wild cards in strings, which means that a search condition à la ``WHERE col_name LIKE '%SOMETHING%'`` is not uncommon.
 Obviously, you cannot create a sensible index for a predicate like that.
@@ -408,11 +408,11 @@ The ``OFFSET/FETCH`` or `row-limiting clause`_ has greatly simplified life for d
       manufacturer
     , product
     , temperature
-    , expiration_date
+    , expiry_date
    FROM
       fridge
    ORDER BY
-      expiration_date
+      expiry_date
    OFFSET 5 ROWS
    FETCH NEXT 10 [ PERCENT ] ROWS ONLY  
    ;
@@ -437,13 +437,13 @@ With that in mind we can rewrite our query:
       manufacturer
     , product
     , temperature
-    , expiration_date
+    , expiry_date
    FROM
       fridge
    WHERE
-      expiration_date < last_expiration_date_of_previous_page
+      expiry_date < last_expiry_date_of_previous_page
    ORDER BY
-      expiration_date
+      expiry_date
    FETCH NEXT 10 [ PERCENT ] ROWS ONLY
    ;
  
