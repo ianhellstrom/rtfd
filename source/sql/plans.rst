@@ -38,7 +38,7 @@ Then you can simply look for your query from ``v$sql``:
 In case you happen to know the SQL ID already and would like to know the corresponding hash value, you can use the function ``DBMS_UTILITY.SQLID_TO_SQLHASH``, which takes the sql_id (``VARCHAR2``) and returns a ``NUMBER``. 
 Note that *all* characters affect the hash value, including spaces and line breaks as well as capitalization and of course comments.
 
-The last stage of the parser is to look for possible shortcuts by sifting through the shared pool, which is a "portion of the SGA that contains shared memory constructs such as shared SQL areas", which hold the parse tree and execution plans for SQL statements; each unique statement has only one shared SQL area.
+The last stage of the parser is to look for possible shortcuts by sifting through the :term:`shared pool`, which is a "portion of the SGA that contains shared memory constructs such as shared SQL areas", which hold the parse tree and execution plans for SQL statements; each unique statement has only one shared SQL area.
 We can distinguish two cases: `hard and soft parses`_.
 
 #. **Soft parse** (library cache hit): if the statement hashes to a value that is identical to one already present in the shared pool *and* the texts of the matching hash values are the same *and* its parsed representation can be shared, Oracle looks up the execution plan and executes the statement accordingly.
@@ -56,14 +56,14 @@ Perhaps you noticed that we had sneaked in the column ``plan_hash_value`` in the
 SQL statements with different hash values can obviously have the `same plan`_, which means that their plan hash values are equal.
 Please note that the plan hash value is merely an `indicator`_ of similar operations on database objects: filter and access predicates, which we shall discuss in more detail, are not part of the plan hash value calculation.
 
-For hard parses, the next station on the SQL compiler line is the query optimizer.
+For hard parses, the next station on the :term:`SQL compiler` line is the query optimizer.
 The query optimizer, or just optimizer, is the "built-in database software that determines the most efficient way to execute a SQL statement". 
 The optimizer is also known as the cost-based optimizer (CBO), and it consists of the query transformer, the estimator, and the plan generator:
 
 * The query transformer "decides whether to rewrite a user query to generate a better query plan, merges views, and performs subquery unnesting".
 * The estimator "uses statistics [from the data dictionary] to estimate the selectivity, cardinality, and cost of execution plans. 
   The main goal of the estimator is to estimate the overall cost of an execution plan".
-* The plan generator "tries out different possible plans for a given query so that the query optimizer can choose the plan with the lowest cost. It explores different plans for a query block by trying out different access paths, join methods, and join orders". The optimizer also evaluates expressions, and it can convert correlated subqueries into equivalent join statements or vice versa.
+* The plan generator "tries out different possible plans for a given query so that the query optimizer can choose the plan with the lowest cost. It explores different plans for a query block by trying out different :term:`access paths <access path>`, join methods, and join orders". The optimizer also evaluates expressions, and it can convert correlated subqueries into equivalent join statements or vice versa.
 
 What the optimizer does, in a nutshell, is apply fancy heuristics to figure out the best way to execute your query: it calculates alternate routes from your screen through the database back to your screen, and picks the best one.
 By default Oracle tries to minimize the `estimated resource usage`_ (i.e. maximize the throughput), which depends on I/O, CPU, memory, the number of rows returned, and the size of the initial data sets.
@@ -337,7 +337,7 @@ The join method dictates to a large degree the cost of joins:
   1. Sort join: both tables are sorted on the join key.
   1. Merge join: sorted tables are merged.
 
-  Oracle accesses rows in the PGA instead of the SGA with a sort-merge join, which reduces logical I/O because it avoids repeated latching blocks in the database buffer cache; a latch protects shared data structures in the SGA from simultaneous access.
+  Oracle accesses rows in the PGA instead of the SGA with a sort-merge join, which reduces logical I/O because it avoids repeated latching blocks in the database buffer cache; a :term:`latch` protects shared data structures in the SGA from simultaneous access.
   
 * Whenever a table has no join conditions to any of the other tables in the statement, Oracle picks a **Cartesian join**, which is nothing but a Cartesian product of the tables.
   Because the number of rows of a Cartesian join of two tables is the product of the number of rows of the tables involved, it is generally used only if the tables are small.
@@ -386,7 +386,7 @@ Parallel Execution
 ------------------
 Sometimes Oracle executes statements in parallel, which can significantly improve the runtime performance of a query.
 The query coordinator (QC) initiates the parallel execution of a SQL statement.
-The parallel server processes (PSPs) are responsible for the actual work that is done in parallel.
+The parallel server :term:`processes` (PSPs) are responsible for the actual work that is done in parallel.
 The coordinator distributes the work to the PSPs, and may have to do some of the work that cannot be done in parallel.
 A classic example is the ``SUM(...)`` operation: the PSPs calculate the subtotals but the coordinator has to add the subtotals from each PSP to obtain the final tally.
 

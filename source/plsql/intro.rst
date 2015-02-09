@@ -6,7 +6,7 @@ What is PL/SQL?
 PL/SQL stands for Procedural Language/Structured Query Language and it is Oracle's extension of SQL that aims to `seamlessly process SQL commands`_. 
 One reason why PL/SQL is so important to database and application developers is that SQL itself offers no robust procedural constructs to apply logical processing to DML statements.
 Because it has been designed to integrate with SQL it supports the same data types. 
-Stored PL/SQL source code is compiled and saved in the Oracle database. 
+Stored PL/SQL source code is compiled and :term:`saved <PVM>` in the Oracle database. 
 With PL/SQL you have access to common 3GL constructs such as conditional blocks, loops, and exceptions. 
 IBM DB2 supports PL/SQL (as of version 9.7.0) and PostgreSQL has a procedural language called PL/pgSQL that borrows heavily from PL/SQL but is not compliant.
 

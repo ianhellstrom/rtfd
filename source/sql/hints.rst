@@ -390,7 +390,7 @@ You may also provide ``DEFAULT`` as an alternative to ``dop``; its behaviour is 
  
 In `Expert Oracle SQL`_ (p.152) it is noted that when inserting data in parallel *before* committing causes subsequent selects to fail *until* the data is committed.
 The reason is that a `direct path write`_ can sometimes be used by parallel DML statements, especially inserts.
-The rows for a direct path write are not in the SGA and must be read from disk.
+The rows for a direct path write are not in the :term:`SGA` and must be read from disk.
 However, before the data is committed there is no fresh data to read from disk!
  
 The ``NO_PARALLEL`` hint overrides the ``PARALLEL`` parameter supplied at the creation or alteration of any table.
@@ -411,7 +411,7 @@ In both hints, ``tab_name_or_alias`` is the hash join's probe row source.
 CTAS and ``INSERT INTO ... SELECT`` statements' distribution of rows between producers and consumers can be controlled with the ``PQ_DISTRIBUTE( tab_name_or_alias  distribution )`` hint.
 The value of ``distribution`` can be one of the following:
  
-* ``NONE``: no distribution, which is ideal when there is no skew, so the overhead of distributing rows can be avoided. It is important to be aware that each query server munches between 512 KB and 1.5 MB (with compression) of PGA memory.
+* ``NONE``: no distribution, which is ideal when there is no skew, so the overhead of distributing rows can be avoided. It is important to be aware that each query server munches between 512 KB and 1.5 MB (with compression) of :term:`PGA` memory.
 * ``PARTITION``: rows are distributed from producers to consumers based on ``tab_name_or_alias``'s partition information, which is best used when producer and consumer operations cannot be combined, there are more partitions than query servers, and there is no skew across partitions.
 * ``RANDOM``: rows are distributed from the consumers to the consumers in a round-robin fashion, which is applicable when the data is skewed.
 * ``RANDOM_LOCAL``: rows are distributed from the consumers to the consumers on the same RAC node in a round-robin fashion, which eliminates inter-node communication.

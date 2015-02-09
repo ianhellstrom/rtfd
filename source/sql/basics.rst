@@ -169,7 +169,7 @@ Other than that, your credibility as a developer might get a slight bump.
   It may come as a surprise but the actual format matters, even spaces!
   The result set that Oracle fetches for you does not depend on spaces but whether it needs to parse a statement with a single space extra.
   We shall talk more about (hard/soft) parsing of statements later when we discuss :ref:`execution plans <sql-exec-plan>`, but for now suffice to say that each query needs to be hashed and analysed by Oracle before it can execute it.
-  If the query hashes are the same, which generally means that the query you have submitted is formatted identically as one in memory (the system global area (SGA) to be precise), Oracle can immediately execute it. If not, Oracle needs to analyse your query first.
+  If the query hashes are the same, which generally means that the query you have submitted is formatted identically as one in memory (the system global area (:term:`SGA`) to be precise), Oracle can immediately execute it. If not, Oracle needs to analyse your query first.
   As said on `DBA Oracle`_, the time Oracle needs to parse a statement is almost negligible, but when many users issue functionally and syntactically identical yet symbolically distinct statements, the small amounts of time can quickly add up.
 
 Although there is no general consensus about good formatting rules, you can add line breaks in appropriate places, so you are able to comment or uncomment lines without having to manually reformat your code every time. This is particularly useful when you are debugging more complex queries. To do so, insert line breaks

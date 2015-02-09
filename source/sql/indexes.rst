@@ -300,7 +300,7 @@ Whether it is the left-hand side or the right-hand side is irrelevant, although 
 Note that the order sometimes matters though: ``col_name LIKE 'ABC%'`` is not the same as ``'ABC%' LIKE col_name``.
 The former searches for ``col_name`` entries that begin with ``ABC``, whereas the latter is the same as the filter ``col_name = 'ABC%'``, that is the ``%`` is not interpreted as a wild card at all.
  
-Indexes can only be used when predicates are sargable, or search-argument-able, which admittedly is a horrible phrase.
+Indexes can only be used when predicates are :term:`sargable <SARGable>`, or search-argument-able, which admittedly is a horrible phrase.
 Functions on columns in the index can prohibit index use, particularly when the index is not a function-based index.
 Apart from that, some operators are sargable and optimizable (i.e. allow the use of an index): ``=``, ``<``, ``>``, ``>=`` ``IS NULL``; some operators are sargable yet not optimizable: ``<>`` and its equivalents (i.e. ``!=`` and ``^=``) and ``NOT``; and ``LIKE`` with a leading wild card is not sargable and hence not optimizable.
 Sargable predicates can be pushed down, which means that a predicate in a statement that references a view or derived table can be 'pushed down' to the view or derived table itself, which avoids having to scan the entire underlying data structure only to filter out a few relevant rows later.
