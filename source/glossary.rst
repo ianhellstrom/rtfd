@@ -44,10 +44,29 @@ Glossary
       Anonymous blocks and data for top-level modules (i.e. functions and procedures) are in the CGA. 
       Package-level data is saved in the :term:`UGA`.
 
+   context switch
+      Whenever control is passed from either the SQL engine to the PL/SQL engine or the other way round we speak of a context switch.
+      Procedural code is handled by the PL/SQL engine, whereas all SQL is handled by the SQL statement executor, or SQL engine.
+      When processing control is exchanged, Oracle needs to store the process state of the executing thread before transferring control to another thread or process.
+      The overhead of context switching may be significant, especially when looping through lots of data.
+      Bulk binds (i.e. ``BULK COLLECT INTO``) can be used to reduce the number of context switches when looping through data.
+     
+      A common mistake is to use a ``SELECT ... INTO ... FROM dual`` in a PL/SQL assignment to obtain a value that can be obtained directly in PL/SQL too.
+      Such an assignment requires two context switches: from PL/SQL to SQL and back from SQL to PL/SQL.
+
    instance
       A database instance, or instance for short, is a combination of :term:`SGA` and background processes. 
       An instance is associated with exactly one database. 
       Oracle allocates a memory area and starts background processes as soon as an instance is started.
+
+   IUD statements
+      A subset of DML statements in SQL: IUD is an acronym of ``INSERT``, ``UPDATE``, and ``DELETE``.
+      The ``MERGE`` statement is a combination of these and thus included too, although it is not explicitly listed in the acronym.
+ 
+      Please note that some people (e.g. `Steven Feuerstein <http://www.oracle.com/technetwork/issue-archive/index-087690.html>`_) do *not* consider the ``SELECT`` to be part of DML, probably because the M refers to 'modification' and a ``SELECT`` does not modify data.
+      This is in contrast to the `generally accepted definition <http://docs.oracle.com/database/121/SQLRF/statements_1001.htm#i2099257>`_.
+      We do not encourage such abuse of terminology as it is likely to lead to confusion.
+      ``SELECT`` statements are commonly referred to as queries.
 
    latch
       A latch is a mutual exclusion (mutex) device. 

@@ -450,7 +450,7 @@ The following table shows all four parameter values, how the rows on the left-ha
 
 +------------+-------------------------------+----------+-----------------------------------------------------------------------------------------------+
 | Parameter  | LHS                           | RHS      | Use Case                                                                                      |
-+============+===============================+==========+==========+====================================================================================+
++============+===============================+==========+===============================================================================================+
 | ``HASH``   | Parallel: hash distribution   | Serial   | No skew in LHS data distribution                                                              |
 +------------+-------------------------------+----------+-----------------------------------------------------------------------------------------------+
 | ``NONE``   | Parallel                      | Parallel | No skew in LHS data distribution *and* LHS distribution best avoided (e.g. many rows in LHS ) |
@@ -551,6 +551,8 @@ Miscellaneous Hints
 This category contains both documented and undocumented hints.
 The ones we describe below are by no means meant to be an exhaustive list.
 We have grouped them by topic for your convenience.
+
+.. _sql-hints-dpins:
 
 Direct-Path Inserts
 ^^^^^^^^^^^^^^^^^^^

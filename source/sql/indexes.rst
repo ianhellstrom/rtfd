@@ -114,7 +114,7 @@ Predicates: Equality before Inequality
 ======================================
 An index can be beneficial to your queries' performance when there is some sort of filtering that can be handled efficiently by the index.
 The performance is intimately related to the ``WHERE`` clause and the existence (or absence) of indexes on columns specified in the ``WHERE`` clause.
-As such, the ``INSERT`` statement is the only one of the unholy insert-update-delete (IUD) trinity that can never benefit from an index: it has no ``WHERE`` clause.
+As such, the ``INSERT`` statement is the only one of the unholy insert-update-delete (:term:`IUD <IUD statements>`) trinity that can never benefit from an index: it has no ``WHERE`` clause.
 With an ``UPDATE`` or ``DELETE`` you typically have predicates, so they can benefit from fast lookups, even though the maintenance of the index negatively affects the performance; it is a trade-off that has to be evaluated carefully by the developer.
 In data warehouse environments it is not uncommon to drop all indexes temporarily and re-create them once the data loaders have completed their business.
 Alternatively, you can make your index unusable (i.e. ``ALTER INDEX index_name UNUSABLE``) and once you have imported the data, rebuild it: ``ALTER INDEX index_name REBUILD``.
