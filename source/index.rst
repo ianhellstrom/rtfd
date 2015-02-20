@@ -5,9 +5,10 @@ Oracle SQL and PL/SQL Optimization for Developers
 .. Its aim is to aid developers in writing efficient SQL and PL/SQL code for modern Oracle databases. 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 4
+   :includehidden:
 
-   intro
-   sql
-   plsql
+   intro/index
+   sql/index
+   plsql/index
    glossary

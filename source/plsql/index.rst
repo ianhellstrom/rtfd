@@ -1,8 +1,9 @@
-.. _plsql-intro:
+﻿.. _plsql-intro:
 
-***************
-What is PL/SQL?
-***************
+######
+PL/SQL
+######
+
 PL/SQL stands for Procedural Language/Structured Query Language and it is Oracle's extension of SQL that aims to `seamlessly process SQL commands`_. 
 One reason why PL/SQL is so important to database and application developers is that SQL itself offers no robust procedural constructs to apply logical processing to DML statements.
 Because it has been designed to integrate with SQL it supports the same data types. 
@@ -16,7 +17,7 @@ Each unit can be one of the following: anonymous block, function, library, packa
 You can send a PL/SQL block of multiple statements to the database, thereby reducing traffic between the application and the database. 
 Furthermore, all variables in ``WHERE`` and ``VALUES`` clauses are turned into bind variables by the PL/SQL compiler. 
 Bind variables are great as they allow SQL statements to be reused, which can improve the performance of the database. 
-We shall talk more about bind variables later (see :ref:`plsql-bind-vars`).
+We shall talk more about bind variables later (see :ref:`plsql-bind`).
 
 Both static and dynamic SQL are supported by PL/SQL.
 This allows developers to be as flexible as one needs to be: statements can be built on the fly.
@@ -58,8 +59,8 @@ After all, as aptly phrased `here <http://stackoverflow.com/a/1252884>`_ on Stac
 
 Anyway, time to sink our teeth into PL/SQL...
 
-.. _seamlessly process SQL commands: http://www.oracle.com/technetwork/database/features/plsql/index.html
-.. _most notably: http://www.amazon.com/Study-Guide-1Z0-144-Database-Certification/dp/1478217995
+.. _`seamlessly process SQL commands`: http://www.oracle.com/technetwork/database/features/plsql/index.html
+.. _`most notably`: http://www.amazon.com/Study-Guide-1Z0-144-Database-Certification/dp/1478217995
 
 Compilation
 ===========
@@ -69,6 +70,9 @@ For example, ``INTO`` clauses are removed from ``SELECT`` statements, local vari
 If the embedded SQL statements contain any PL/SQL function calls, the SQL engine lets the PL/SQL engine take over to complete the calls in case the function result cache does not have the desired data.
 Once the SQL compiler is done, it hands the execution plan over to the SQL engine to fulfil the request.
 Meanwhile the :term:`PVM` interprets the PL/SQL bytecode and, once the SQL engine has come up with the results, returns the status (success/failure) to the client session.
+
+Whenever an identifier cannot be resolved by the SQL engine, it escapes, and the PL/SQL engine tries its best to resolve the situation.
+It first checks the current PL/SQL unit, then the schema, and if that does not yield success, it eventually generates a compilation error.
  
 The `PL/SQL compilation` itself proceeds as follows:
  
@@ -90,6 +94,14 @@ MCode is interpreted and executed by the PL/SQL runtime engine; native code is s
 Both the DIANA and bytecode are stored in the data dictionary.
 For anonymous blocks the DIANA code is discarded.
  
-.. _PL/SQL compilation: http://eu.wiley.com/WileyCDA/WileyTitle/productCd-0764598074.html
-.. _a third-party C compiler: http://www.cengage.com/search/productOverview.do?N=16+4294922389+4294966055+19&Ntk=P_EPI&Ntt=11395859158516404884848709101527959663
-.. _in a white paper: http://www.oracle.com/technetwork/database/features/plsql/codeorder-133512.zip
+.. _`PL/SQL compilation`: http://eu.wiley.com/WileyCDA/WileyTitle/productCd-0764598074.html
+.. _`a third-party C compiler`: http://www.cengage.com/search/productOverview.do?N=16+4294922389+4294966055+19&Ntk=P_EPI&Ntt=11395859158516404884848709101527959663
+.. _`in a white paper`: http://www.oracle.com/technetwork/database/features/plsql/codeorder-133512.zip
+
+
+
+.. toctree::
+   :hidden:
+
+   bind/index
+   loops/index
