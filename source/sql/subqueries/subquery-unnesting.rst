@@ -118,8 +118,8 @@ Therefore, the bottom query will have better runtime performance.
  
 Important to note is that the result sets of both may not be the same though.
 Suppose ``col_name`` contains the following *distinct* entries: 0, 1, and 2.
-Let's also assume that the function we want to apply is ``SIN(col_name*c_pi)``, where ``c_pi`` can be a global (PL/SQL) constant defined in a package as ``ACOS(-1)``.
-In case you have already forgotten geometric functions from basic calculus -- shame on you! --: the sine function is zero at all multiples of :math:`{\pi}`.
+Let's also assume that the function we want to apply is ``SIN(col_name*gc_pi)``, where ``gc_pi`` can be a global (PL/SQL) constant defined in a package as ``ACOS(-1)``.
+In case you have already forgotten geometric functions from basic calculus: the sine function is zero at all multiples of :math:`\pi`.
 The former query will therefore return only one row with ``col_alias`` equal to zero, whereas the latter will return three rows, all zero.
  
 Functions that lead to the same result set in both cases are known as bijective maps in mathematical circles.

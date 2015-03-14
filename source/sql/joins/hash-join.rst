@@ -29,8 +29,8 @@ Join Orders and Join Trees
 When you hash-join several row sources with an inner join, Oracle can in principle swap the order without affecting the result set.
 Why would it want to do that?
 Well, the optimizer may discover that one particular join order is better than all the others.
-For an inner join of :math:`{n}` tables, there are :math:`{n!}` possible join orders.
-For four tables, we have :math:`{4! = 4\cdot 3\cdot 2\cdot 1 = 24}` possibilities.
+For an inner join of :math:`n` tables, there are :math:`n!` possible join orders.
+For four tables, we have :math:`4! = 4\cdot 3\cdot 2\cdot 1 = 24` possibilities.
 So the chances are that there is at least one that is significantly better and one that is the absolute worst.
  
 Let's take four tables: T1, T2, T3, and T4.

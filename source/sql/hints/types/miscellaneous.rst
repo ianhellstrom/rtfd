@@ -62,7 +62,7 @@ With the ``INLINE`` hint you can prevent the materialization, which in turn mean
 
 Manual Cardinality Estimates
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-As we have said before, the cardinality is simply the number of rows divided by the number of distinct values (:math:`{\mathit{NDV}}`); a rough estimate of the selectivity is :math:`{1/\mathit{NDV}}`.
+As we have said before, the cardinality is simply the number of rows divided by the number of distinct values (:math:`\mathit{NDV}`); a rough estimate of the selectivity is :math:`1/\mathit{NDV}`.
 The cardinality is in all but heavily hinted SQL statements one of the top measures that influences the cost and thus the execution plan to be taken.
 Consequently, accurate statistics are essential.
 
