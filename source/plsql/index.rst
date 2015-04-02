@@ -1,4 +1,4 @@
-﻿.. _plsql-intro:
+.. _plsql-intro:
 
 ######
 PL/SQL
@@ -105,3 +105,4 @@ For anonymous blocks the DIANA code is discarded.
 
    bind/index
    loops/index
+   cache/index

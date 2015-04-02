@@ -1,4 +1,4 @@
-﻿.. _sql-subqueries-unnesting:
+.. _sql-subqueries-unnesting:
  
 Subquery Unnesting
 ------------------

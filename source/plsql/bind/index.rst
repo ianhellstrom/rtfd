@@ -1,4 +1,4 @@
-﻿.. _plsql-bind:
+.. _plsql-bind:
 
 **************
 Bind Variables

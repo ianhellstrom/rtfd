@@ -1,4 +1,4 @@
-﻿.. _plsql-bind-sharing:
+.. _plsql-bind-sharing:
 
 Adaptive Cursor Sharing and Adaptive Execution Plans
 ====================================================

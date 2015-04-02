@@ -1,4 +1,4 @@
-﻿.. sql-subqueries-nested:
+.. sql-subqueries-nested:
  
 Nested and Correlated Subqueries
 ================================
