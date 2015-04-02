@@ -23,6 +23,6 @@ Then read on!
    :hidden:
 
    Side Effects <side-effects>
-   Alternatives <alternatives>
+   Alternatives <alternatives/index>
    The UDF Pragma <udf-pragma>
    The NOCOPY Directive <nocopy-directive>

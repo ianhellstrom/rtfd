@@ -1,4 +1,4 @@
-﻿.. _sql-hints-types:
+.. _sql-hints-types:
  
 Types of Hints
 ==============

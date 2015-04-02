@@ -1,4 +1,4 @@
-﻿.. _sql-hints:
+.. _sql-hints:
 
 *****
 Hints

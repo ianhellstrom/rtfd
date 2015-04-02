@@ -1,64 +1,5 @@
-.. _plsql-cache-alternatives:
- 
-Alternatives
-============
-Oracle offers a few alternatives for caching: deterministic functions, package-level variables, and the result cache (for functions).
-Each of these techniques has its pros and cons.
- 
-Package-level variables are conceptually the simplest but require the developer to think about and manage the cache.
-A package-level variable is really what it says on the box: a variable in a package that contains static (reference) data that needs to be accessed many times.
- 
-Suppose you have an expensive deterministic function that you need to execute many times.
-You can run the function for different parameter values and store the combination of input-output as a key-value pair in a collection at the package level.
-You can thus access the data without having to recompute it every time.
- 
-Similarly, you can store (pre-aggregated) data from a table that does not change while you work with it, so you don't have to go back and forth between the disk and the PGA.
-Alternatively, you can create a just-in-time cache, where each time a new value or row is requested, you check the cache and return the data (if already present) or add it to the cache (if not yet available in the cache) for future use.
-That way, you do not create a huge collection up front but improve the lookup performance of subsequent data access requests or computations.
- 
-Another common use case for package-level variables that has little to do with caching though is when people try to avoid the dreaded `mutating table error with triggers`_.
- 
-A problem with package-level variables is that they are stored in the :term:`UGA`.
-This means that the memory requirements go up as there are more sessions.
-Of course, you can add the ``SERIALLY_REUSABLE`` directive to the package to reduce storage requirements, but it also means that the data needs to be exactly the same across sessions, which is rare, especially in-between transactions.
- 
-You do *not* want to use package-level variables as caches when the data contained in them changes frequently during a session or requires too much memory.
-A measly 10 MB per user quickly becomes 1 GB when there are 100 sessions, making a what seemed to be a smart idea a veritable memory hog.
- 
-In terms of speed, packaged-based caching beats the competition, although the function result cache is `a close second`_.
-But, as we have mentioned, package-based caching is also fairly limited in its uses and requires a developer to think carefully about the caching mechanism itself and the overall memory requirements.
-Moreover, on Oracle Database 11g and above, the built-in alternatives are almost always a better option.
- 
-``DETERMINISTIC`` Functions
----------------------------
-The ``DETERMINISTIC`` clause for functions is ideal for functions that do not have any non-deterministic components.
-This means that each time you provide the function with the same parameter *values*, the result is the same.
-When you define a function you can simply add the ``DETERMINISTIC`` option to the declaration section, making sure that the function (or any functions or procedures it calls) does not depend on the state of session variables or schema objects as the `results may vary across invocations`_.
-This option instructs the optimizer that it may use a cached result whenever it encounters a previously calculated result.
- 
-Any speed-up from specifying a function as ``DETERMINISTIC`` becomes apparent when you execute the same function many times with the same parameter values *in the same SQL statement*.
-A typical example is a user-defined conversion function that is called for each row of the result set of a query
- 
-Function-based indexes can only use functions marked ``DETERMINISTIC``.
-The same goes for materialized views with ``REFRESH FAST`` or ``ENABLE QUERY REWRITE``.
- 
-One restriction is that you cannot define a nested function as deterministic.
- 
-Whenever a function is free of side effects and deterministic, it is a good practice to add the ``DETERMINISTIC`` option.
-Whether the optimizer makes use of that information is entirely up to Oracle, but fellow coders will know that you intended to create a deterministic, side-effect free function, even when Oracle does not see a use for that information.
- 
-'What happens when I label a function as ``DETERMINISTIC`` but it secretly isn't?'
- 
-First off, why on earth would you do that?!
-Second, Oracle cannot fix stupidity.
-Its capability to discover non-deterministic ``DETERMINISTIC`` functions is not just limited, it is non-existent.
-Yes, that's right: Oracle does not check whether you are telling the truth.
-It trusts you implicitly.
- 
-What can happen, though, is that a user sees dirty (i.e. uncommitted) data because the incorrectly-marked-as-deterministic function queries data from a table that has been cached inappropriately.
-`Neil Chandler`_ has written about the multi-version concurrency control model (MVCC) used by Oracle Database, which explains the roles of isolation levels, REDO, and UNDO with regard to `dirty reads`_, in case you are interested.
-If you tell Oracle that a function is deterministic even though it is not, then the results can be unpredictable.
- 
+.. _plsql-cache-alt-rc:
+
 The ``RESULT_CACHE`` Option
 ---------------------------
 As of Oracle Database 11g, the function result cache has entered the caching fray.
@@ -160,36 +101,13 @@ There are also `several`_ `solutions`_ available that calculate the various stat
 They typically work by checking the metrics before running a function several times, then run the function, after which they check the metrics again.
  
 In case you need help configuring the function result cache, here's `a helping hand`_.
- 
-``DETERMINISTIC`` vs ``RESULT_CACHE``
--------------------------------------
-A common question with caching is whether the ``DETERMINISTIC`` option or the ``RESULT_CACHE`` is best.
-As always, the answer is: 'It depends.'
- 
-When you call a deterministic function many times from within the *same* SQL statement, the ``RESULT_CACHE`` does not add much to what the ``DETERMINISTIC`` option already covers.
-Since a single SQL statement is executed from only one session, the function result cache cannot help with multi-session caching as there is nothing to share across sessions.
-As we have said, marking a deterministic function as ``DETERMINISTIC`` is a good idea in any case.
- 
-When you call a deterministic function many times from *different* SQL statements — in potentially different sessions or even `instances of a RAC`_ — and even PL/SQL blocks, the ``RESULT_CACHE`` does have benefits.
-Now, Oracle can access a single source of cached data across statements, subprograms, sessions, or even application cluster instances.
- 
-The 'single source of cached data' is of course only true for DR units.
-For IR units, the function result cache is user-specific, which probably dampens your euphoria regarding the function result cache somewhat.
-Nevertheless, both caching mechanisms are completely handled by Oracle Database.
-All you have to do is add a simple ``DETERMINISTIC`` and/or ``RESULT_CACHE`` to a function's definition.
- 
-.. _`a close second`: http://www.oracle-developer.net/display.php?id=504
-.. _`mutating table error with triggers`: http://oracle-base.com/articles/9i/mutating-table-exceptions.php#solution_1
-.. _`results may vary across invocations`: http://docs.oracle.com/database/121/LNPLS/function.htm
-.. _`Neil Chandler`: http://chandlerdba.wordpress.com/2013/12/01/oracles-locking-model-multi-version-concurrency-control
-.. _`dirty reads`: http://docs.oracle.com/database/121/CNCPT/consist.htm
-.. _`per user`: http://www.oracle.com/technetwork/issue-archive/2013/13-sep/o53plsql-1999801.html
-.. _`instances of a RAC`: http://www.oracle.com/technetwork/articles/datawarehouse/vallath-resultcache-rac-284280.html
-.. _`official documentation`: http://docs.oracle.com/database/121/REFRN/stats002.htm
+
 .. _`Adrian Billington`: http://www.oracle-developer.net/display.php?id=504
-.. _`several`: http://www.oracle.com/technetwork/issue-archive/2010/10-sep/o57plsql-088600.html
-.. _`solutions`: http://www.oracle-developer.net/utilities.php
-.. _`a helping hand`: http://www.dba-oracle.com/oracle11g/oracle_11g_result_cache_sql_hint.htm
 .. _`high degree of concurrency`: http://www.pythian.com/blog/oracle-11g-result-cache-in-the-real-world
 .. _`from 11gR1 to 11gR2`: http://afatkulin.blogspot.de/2010/06/11gr2-result-cache-scalability.html
 .. _`latch contention`: http://www.toadworld.com/platforms/oracle/w/wiki/382.optimizing-the-oracle-11g-result-cache.aspx
+.. _`per user`: http://www.oracle.com/technetwork/issue-archive/2013/13-sep/o53plsql-1999801.html
+.. _`official documentation`: http://docs.oracle.com/database/121/REFRN/stats002.htm
+.. _`several`: http://www.oracle.com/technetwork/issue-archive/2010/10-sep/o57plsql-088600.html
+.. _`solutions`: http://www.oracle-developer.net/utilities.php
+.. _`a helping hand`: http://www.dba-oracle.com/oracle11g/oracle_11g_result_cache_sql_hint.htm
