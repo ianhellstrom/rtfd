@@ -1,4 +1,4 @@
-﻿.. _sql-hints-types-misc:
+.. _sql-hints-types-misc:
 
 Miscellaneous Hints
 -------------------
@@ -41,7 +41,7 @@ The hint can be placed at the top level, in a factored subquery, or an inline vi
 Subsequent executions of the same statement can be satisfied with data from the cache, which means that Oracle can save on a few round trips to the database.
 Cached results are automatically invalidated when a database object upon which the result depends is modified.
 
-It is also possible to use system or session settings and/or table annotations to enable the result cache.
+It is also possible to use system or session settings and/or table annotations to enable the :ref:`result cache <plsql-cache-alt-rc>`.
 Typically the initialization parameter ``RESULT_CACHE_MODE`` is set to ``MANUAL``, as ``FORCE`` causes all statements' results to be cached, which is a bad idea when set at the system level.
 The ``RESULT_CACHE`` attribute of tables is set to either the ``FORCE`` or ``DEFAULT`` mode.
 ``DEFAULT`` requires the ``RESULT_CACHE`` hint in all queries where the results should be cached, and because it is the default often requires no further action.
@@ -49,7 +49,7 @@ In case a table is set to ``FORCE`` mode, the ``NO_RESULT_CACHE`` hint can be us
 Table annotations apply to entire queries that reference these tables, not just individual query blocks.
 
 Read consistency requires that whenever a session transaction references tables or views in query, the results from this query are not cached.
-Furthermore, any (user-defined) functions used in the query have to be ``DETERMINISTIC``, and the query may not contain temporary tables, tables owned by ``SYS`` or ``SYSTEM``, the ``CURRVAL`` or ``NEXTVAL`` pseudocolumns, or instantaneous time functions such ``SYSDATE`` or ``SYS_TIMESTAMP``.
+Furthermore, any (user-defined) functions used in the query have to be :ref:`deterministic <plsql-cache-alt-det>`, and the query may not contain temporary tables, tables owned by ``SYS`` or ``SYSTEM``, the ``CURRVAL`` or ``NEXTVAL`` pseudocolumns, or instantaneous time functions such ``SYSDATE`` or ``SYS_TIMESTAMP``.
 
 There is also an undocumented ``MATERIALIZE`` hint that causes `factored subqueries to be materialized`_, that is they are stored in `a global temporary table`_ that is created (and dropped) on the fly.
 Whenever a factored subquery is accessed more than once in the same SQL statement, the factored subquery in question is automatically materialized.

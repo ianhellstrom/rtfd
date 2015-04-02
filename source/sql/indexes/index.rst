@@ -1,4 +1,4 @@
-﻿.. _sql-indexes:
+.. _sql-indexes:
 
 *******
 Indexes

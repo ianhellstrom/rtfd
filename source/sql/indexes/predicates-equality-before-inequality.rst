@@ -1,4 +1,4 @@
-﻿.. _sql-indexes-predicates:
+.. _sql-indexes-predicates:
      
 Predicates: Equality before Inequality
 ======================================
@@ -32,7 +32,7 @@ If you only have one column that you ever use to look for data, then that column
 Suppose your application requires an ISBN to return the title, the first and last name of the main author, purely as information and nothing else.
 It can then make sense to include these three columns in the index too, not because you filter on them — because we just said you don't — but to make sure that Oracle can avoid a trip to the table: Oracle can simply read the index and retrieve the information it needs to provide from it.
 Such retrieval logic is generally coded in PL/SQL functions that live inside the database.
-We shall talk more about functions when we talk about PL/SQL, but we want to mention two advantages of this approach to whet your appetite: when using bind variables, the execution plan is stored irrespective of the ISBN provided, so Oracle does not need to ask the optimizer again and again, and you can take advantage of the result cache, which means that information on popular books is cached and available without having to check the index or fetch data from the table.
+We shall talk more about functions when we talk about PL/SQL, but we want to mention two advantages of this approach to whet your appetite: when using :ref:`bind variables <plsql-bind>`, the execution plan is stored irrespective of the ISBN provided, so Oracle does not need to ask the optimizer again and again, and you can take advantage of the :ref:`result cache <plsql-cache-alt-rc>`, which means that information on popular books is cached and available without having to check the index or fetch data from the table.
  
 Anyway, when you include multiple columns in an index, that is you create a compound index, the order of the columns is very important.
 The difference between a column being used as a filter rather than access predicate can be significant.
