@@ -24,6 +24,15 @@ This hint is used for ``INSERT INTO ... SELECT`` statements, whereas the ``APPEN
 ``NOAPPEND`` -- without an underscore! -- makes sure that the data is not inserted by means of a direct-path insert.
 These hints do not affect anything other than ``INSERT`` statements.
 
+Important to know is that during direct-path inserts certain constraints are disabled.
+Only ``NOT NULL`` and ``UNIQUE`` (hence also ``PRIMARY KEY``) constraints remain *enabled*.
+Rows that violate ``UNIQUE`` constraints are, however, `still loaded`_, which is different from the normal behaviour, where such rows are rejected. 
+
+Not all tables can use a direct-path insert though.
+In particular, clustered tables, tables with :term:`VPD` policies, tables with ``BFILE`` columns.
+Similarly, direct-path insert is not possible on a *single partition* of a table if it has global indexes defined on it, referential (i.e. foreign-key) and/or check constraints, or *enabled* triggers defined.
+Furthermore, no segments of a table can have open transactions.
+
 What about partial deletions that cannot be simply ``TRUNC``'d?
 The best solution is to partition the table and `drop entire partitions`_.
 Beware that ``TRUNC`` is a DDL statement, which means that it comes with an implicit ``COMMIT`` in contrast to ``DELETE``, which is a DML statement and requires an explicit ``COMMIT`` (or ``ROLLBACK``).
@@ -213,3 +222,4 @@ In case the initialization parameter ``_CONVERT_SET_TO_JOIN`` has been set, you 
 .. _`Ian Hellström`: http://wp.me/p4zRKC-3b
 .. _`deprecated`: http://docs.oracle.com/cd/B12037_01/server.101/b10752/whatsnew.htm
 .. _`join elimination`: http://oracle-base.com/articles/misc/join-elimination.php
+.. _`still loaded`: http://docs.oracle.com/database/121/SUTIL/ldr_modes.htm#SUTIL1331

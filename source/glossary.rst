@@ -183,3 +183,7 @@ Glossary
       Package-level data is stored in the UGA, which means that it grows linearly with each new user session. 
       When the state of a package is serially reusable (``PRAGMA SERIALLY_REUSABLE``), the package data is stored in the :term:`SGA` and persists for the life of the server call. 
       Non-reusable package states remain for the life of a session.
+
+   VPD
+      A virtual private database (VPD) allows security policies to be created that enable/disable access to columns or rows.
+      It is a `fine-grained security control system <http://docs.oracle.com/database/121/DBSEG/vpd.htm5>`_ on individual objects and the data contained within rather than based on the schema (user) level.
