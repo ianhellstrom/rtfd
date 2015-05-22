@@ -277,6 +277,8 @@ Cardinality estimates and access paths largely determine the overall cost of joi
   Hash anti-joins and semi-joins can sometimes override the ordering though.
 * If `view merging`_ is impossible, then all tables in the view are joined before joining the view to the tables outside the view.
 
+.. _sql-partition-pruning:
+
 Partition Pruning
 -----------------
 Partition pruning, which is also known as partition elimination, is used for partitioned tables when not all partitions need to be accessed.

@@ -91,10 +91,10 @@ Here's an overview of several runs on 12c, where we show the improvement factors
 +----------------------------------------------+-----------+--------+
 | BCL ``FETCH`` → PTF ``INSERT``               | -2.7      | \(0\)  |
 +----------------------------------------------+-----------+--------+
-| BLC ``FETCH`` → parallel PTF ``INSERT``      | -5.3      | -1500  |
+| BCL ``FETCH`` → parallel PTF ``INSERT``      | -5.3      | -1500  |
 +----------------------------------------------+-----------+--------+
  
-Notice the parentheses around the redo information for BCLFA and the BLC-PTF combination.
+Notice the parentheses around the redo information for BCLFA and the BCL-PTF combination.
 These numbers are typically close to the ones for the ``FOR`` loop (+7.3, i.e. a more than sevenfold increase in the amount of redo generated) and ``FOR``-PTF combination (0, i.e. no improvement at all), respectively.
 The reason is that redo is obviously generated for IUD statements and in these cases the ``INSERT`` statements are identical to the ones mentioned.
 Any differences are due to what comes before: a ``SELECT`` can generate redo too due to `block clean-outs`_.

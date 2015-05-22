@@ -1,4 +1,4 @@
-﻿.. _sql-joins-hash:
+.. _sql-joins-hash:
  
 Hash Join
 =========

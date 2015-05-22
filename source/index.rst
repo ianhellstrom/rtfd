@@ -11,4 +11,5 @@ Oracle SQL and PL/SQL Optimization for Developers
    intro/index
    sql/index
    plsql/index
+   modelling/index
    glossary
