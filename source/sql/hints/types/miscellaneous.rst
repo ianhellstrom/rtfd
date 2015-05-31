@@ -23,6 +23,7 @@ Since a direct-path insert is basically the same as appending data, the hint is 
 This hint is used for ``INSERT INTO ... SELECT`` statements, whereas the ``APPEND_VALUES`` hint is for ``INSERT INTO ... VALUES`` statements.
 ``NOAPPEND`` -- without an underscore! -- makes sure that the data is not inserted by means of a direct-path insert.
 These hints do not affect anything other than ``INSERT`` statements.
+How space is managed during a direct-path insert is described in detail on `the official optimizer blog`_.
 
 Important to know is that during direct-path inserts certain constraints are disabled.
 Only ``NOT NULL`` and ``UNIQUE`` (hence also ``PRIMARY KEY``) constraints remain *enabled*.
@@ -223,3 +224,4 @@ In case the initialization parameter ``_CONVERT_SET_TO_JOIN`` has been set, you 
 .. _`deprecated`: http://docs.oracle.com/cd/B12037_01/server.101/b10752/whatsnew.htm
 .. _`join elimination`: http://oracle-base.com/articles/misc/join-elimination.php
 .. _`still loaded`: http://docs.oracle.com/database/121/SUTIL/ldr_modes.htm#SUTIL1331
+.. _`the official optimizer blog`: http://blogs.oracle.com/optimizer/entry/space_management_and_oracle_direct
