@@ -46,4 +46,5 @@ There are many more hints than we describe here, and you are invited to check th
    Join Order Hints <join-order>
    Join Operation Hints <join-operation>
    Parallel Execution Hints <parallel>
+   Query Transformation Hints <transformation>
    Miscellaneous Hints <miscellaneous>
