@@ -2,7 +2,7 @@
 Licence
 #######
 
-Copyright 2014 Christian Hellström. 
+Copyright 2014-2015 Ian Hellström. 
 All rights reserved.
 
 This file, as all files on the public repository `hell316/oracle <http://bitbucket.org/hell316/oracle>`_, is part of **Oracle SQL & PL/SQL Optimization for Developers**.

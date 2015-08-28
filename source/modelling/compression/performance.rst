@@ -71,6 +71,7 @@ A full table scan takes 86.5% for ``BASIC``, 87.0% for ``OLTP``, 41.5% for ``QUE
 So, it's true that decompression does not affect read operations.
 With the exception of ``ARCHIVE HIGH``  most compression options do not affect query and insert performance too badly.
 It is possible (and likely) that the reduced I/O makes queries faster. 
+However, when you're running an OLTP database, it's probably best that you stay away from compression altogether.
 Nice!
 
 .. _`Uwe Hesse`: http://uhesse.com/2011/01/21/exadata-part-iii-compression/
