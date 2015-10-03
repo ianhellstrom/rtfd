@@ -10,7 +10,7 @@ We don't want to step on anyone's toes but frequently production SQL code (e.g. 
 The fact of the matter is that they have run into one of many traps, such as non-SARGable predicates, bad (or no) use of indexes, unnecessarily complicated (nested) subqueries that not even their creator can understand after a short lunch break but somehow magically deliver the correct, or rather desired, results.
 Other programming languages, especially the more common third-generation ones, do not have that problem: applications are mostly developed by professional developers who (should) know what they're doing.
 
-There are many excellent references on the topic of SQL and PL/SQL optimization, most notably Oracle's own extensive `documentation`_, Tom Kyte's `Ask Tom`_ Q\&A website, entries by `Burleson Consulting`_,  Tim Hall's `Oracle Base`_ pages, Steven Feuerstein's `PL/SQL Obsession`_, `Oracle Developer`_, `books`_, and a wealth of blogs (e.g. by `Oracle ACEs`_).
+There are many excellent references on the topic of SQL and PL/SQL optimization, most notably Oracle's own extensive `documentation`_, Tom Kyte's `Ask Tom`_ Q\&A website, entries by `Burleson Consulting`_,  Tim Hall's `Oracle Base`_ pages, Steven Feuerstein's `PL/SQL Obsession`_, `Oracle Developer`_ by Adrian Billington, `books`_, and a wealth of blogs (e.g. by `Oracle ACEs`_).
 
 'So why this guide?' we hear you ask.
 Two reasons really:
