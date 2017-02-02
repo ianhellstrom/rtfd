@@ -2,10 +2,10 @@
 Licence
 #######
 
-Copyright 2014-2015 Ian Hellström. 
+Copyright 2014-2017 Ian Hellström. 
 All rights reserved.
 
-This file, as all files on the public repository `hell316/oracle <http://bitbucket.org/hell316/oracle>`_, is part of **Oracle SQL & PL/SQL Optimization for Developers**.
+This file, as all files on the public repository `databaseline/rtfd <https://bitbucket.org/databaseline/rtfd>`_, is part of **Oracle SQL & PL/SQL Optimization for Developers**.
 
 **Oracle SQL & PL/SQL Optimization for Developers** is a free documentation project: you can redistribute it and/or modify it under the terms of the GNU General Public Licence as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
