@@ -17,14 +17,14 @@ master_doc = 'index'
 project = u'Oracle SQL & PL/SQL Optimization for Developers'
 copyright = u'2014-2020, Ian Hellström'
 version = '2.2'
-release = '2.2.0'
+release = '2.2.1'
 exclude_patterns = []
 pygments_style = 'sphinx'
 html_theme = 'default'
 html_static_path = ['_static']
 htmlhelp_basename = 'OraclePLSQLOptimizationforDevelopersdoc'
 
-latex_elements = {
+latex_elements = { }
 latex_documents = [
   ('index', 'OraclePLSQLOptimizationforDevelopers.tex', u'Oracle SQL \& PL/SQL Optimization for Developers Documentation',
    u'Ian Hellström', 'manual'),
