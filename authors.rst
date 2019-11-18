@@ -2,6 +2,4 @@
 Contributors
 ############
 
-Authors of **Oracle SQL & PL/SQL Optimization for Developers** are (in order of first commit date):
-
-* Ian Hellström
+The author of **Oracle SQL & PL/SQL Optimization for Developers** is `Ian Hellström <https://databaseline.bitbucket.io/about/`_.
