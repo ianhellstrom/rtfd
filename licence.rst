@@ -5,7 +5,7 @@ Licence
 Copyright 2014-2020 Ian Hellström.
 All rights reserved.
 
-This file, as all files on the public repository `databaseline/rtfd <https://bitbucket.org/databaseline/rtfd>`_, is part of **Oracle SQL & PL/SQL Optimization for Developers**.
+This file, as all files on the public repository `databaseline/rtfd <http://bitbucket.org/databaseline/rtfd>`_, is part of **Oracle SQL & PL/SQL Optimization for Developers**.
 
 **Oracle SQL & PL/SQL Optimization for Developers** is a free documentation project: you can redistribute it and/or modify it under the terms of the GNU General Public Licence as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 

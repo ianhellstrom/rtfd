@@ -90,4 +90,4 @@ Similarly, you can use the ``NO_QUERY_TRANSFORMATION`` hint to disable *all* que
 .. _`global temporary tables`: http://www.dba-oracle.com/t_tuning_sql_subqueries.htm
 .. _`use the TEMP rather than the UNDO tablespace`: http://www.dba-oracle.com/t_with_clause.htm
 .. _`Pro Oracle SQL`: http://www.apress.com/9781430232285
-.. _`Databaseline`: https://www.databaseline.tech/how-to-multiply-across-a-hierarchy-in-oracle-part-2/
+.. _`Databaseline`: http://www.databaseline.tech/how-to-multiply-across-a-hierarchy-in-oracle-part-2/
