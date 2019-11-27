@@ -16,5 +16,5 @@ We can therefore recommend that you first try to add ``PRAGMA UDF`` to your PL/S
 If that does not provide a significant benefit, then try the ``WITH`` function block.
  
 .. _`compiler directive`: http://docs.oracle.com/database/121/LNPLS/udf_pragma.htm
-.. _`Databaseline`: https://databaseline.bitbucket.io/how-to-multiply-across-a-hierarchy-in-oracle-part-1/
-.. _`marginally faster`: https://databaseline.bitbucket.io/how-to-multiply-across-a-hierarchy-in-oracle-part-2/
+.. _`Databaseline`: https://www.databaseline.tech/how-to-multiply-across-a-hierarchy-in-oracle-part-1/
+.. _`marginally faster`: https://www.databaseline.tech/how-to-multiply-across-a-hierarchy-in-oracle-part-2/
