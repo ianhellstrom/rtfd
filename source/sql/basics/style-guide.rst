@@ -167,7 +167,7 @@ The document's source is in Markdown and `publicly available`_ in order to make 
 .. _`Hungarian notation`: http://programmers.stackexchange.com/a/39874
 .. _`Steven Feuerstein's`: http://www.toadworld.com/platforms/oracle/w/wiki/8245.plsql-standards.aspx
 .. _`topcoder`: http://www.topcoder.com/i/development/uml/Oracle_PLSQL_Coding_Guidelines.pdf
-.. _`Ian Hellström`: http://www.databaseline.tech/guidelines.html
+.. _`Ian Hellström`: https://databaseline.tech/guidelines.html
 .. _`publicly available`: https://bitbucket.org/databaseline/docs
 .. _`Steven Feuerstein's`: http://www.toadworld.com/platforms/oracle/w/wiki/8245.plsql-standards.aspx
 .. _`topcoder's`: http://www.topcoder.com/i/development/uml/Oracle_PLSQL_Coding_Guidelines.pdf
