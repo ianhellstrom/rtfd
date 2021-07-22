@@ -25,7 +25,6 @@ Please check the source folder of the repository for examples.
 Acknowledgements
 ****************
 Many thanks are due to the team at `Read The Docs <http://readthedocs.org>`_ for allowing the automated build and distribution of this document.
-For hosting the documentation files we are also indebted to `Atlassian <http://bitbucket.org>`_.
 
 *************
 Contributions
