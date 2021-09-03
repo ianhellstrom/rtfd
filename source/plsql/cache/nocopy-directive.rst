@@ -24,7 +24,7 @@ The ``NOCOPY`` hint can thus help you reduce unnecessary CPU cycles and memory c
 There are several cases where you can be sure the compiler ignores ``NOCOPY``:
  
 * The actual parameter must be *implicitly* converted to the data type of the formal parameter.
-* The actual parameter is the element of a collection (unless it is also a collection -- see dbms_sql.column_value procedure).
+* The actual parameter is the element of a collection (unless the element is also a collection).
 * The actual parameter is a scalar variable with a ``NOT NULL`` constraint.
 * The actual parameter is a scalar numeric variable with a range, size, or precision constraint.
 * The actual *and* formal parameters are records.
