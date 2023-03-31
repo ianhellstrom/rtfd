@@ -84,7 +84,7 @@ You can add comments to tables, (materialized) views, columns, operators and ind
 
 .. note::
    You can automatically generate documentation (HTML, PDF, CHM, …) from the metadata in the data dictionary (``SELECT * FROM dictionary``) with for instance the option to 'Generate DB Doc' from the connections window/tab in Oracle SQL Developer, Quest Toad's 'HTML Schema Doc Generator' in the Database > Report menu. 
-   Specialized tools to extract and display metadata from Oracle's data dictionary exist too: for example, the xSQL's excellent `Database Documenter`_ or the free `SchemaSpy`_.
+   Specialized tools to extract and display metadata from Oracle's data dictionary exist too: for example, devart's `dbForge Documenter`_ or the free `SchemaSpy`_.
     
 Constraints
 -----------
@@ -159,7 +159,7 @@ An example of a comprehensive set of coding guidelines for both SQL and PL/SQL i
 The document's source is in Markdown and `publicly available`_ in order to make it easy for you to adapt it to your (organization's) needs.
 `Steven Feuerstein's`_  and `topcoder's`_ best practices and programming standards focus mainly on PL/SQL.
 
-.. _`Database Documenter`: http://www.xsql.com/products/database_documenter/
+.. _`dbForge Documenter`: https://www.devart.com/dbforge/oracle/documenter/
 .. _`SchemaSpy`: http://schemaspy.sourceforge.net/
 .. _`online formatter`: http://www.dpriver.com/pp/sqlformat.htm
 .. _`DBA Oracle`: http://www.dba-oracle.com/t_sql_statements_formatting.htm
