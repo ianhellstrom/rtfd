@@ -10,7 +10,7 @@ Whenever it is more advantageous to (temporarily) materialize the factored subqu
 Of course, this does not always work, especially when statistics are unavailable or not representative of the current situation.
  
 Interestingly, recursive factored subqueries can sometimes perform better than traditional solutions, especially for hierarchical queries.
-A detailed example is provided by Ian Hellström on `Databaseline`_ for the multiplication across the branches of a hierarchy, where an approach with a recursive factored subquery is shown to outperform the standard Oracle solution with ``CONNECT BY`` by several orders of magnitude.
+A detailed example is provided by Ian Hellström on `ianhellstrom.org`_ for the multiplication across the branches of a hierarchy, where an approach with a recursive factored subquery is shown to outperform the standard Oracle solution with ``CONNECT BY`` by several orders of magnitude.
  
 Before the advent of factored subqueries, developers were often told that `global temporary tables`_ were the cure for bad subquery performance.
 That is no longer the case because either Oracle already materializes the factored subquery or you can force Oracle do to so with ``/*+ materialize */``.
@@ -90,4 +90,4 @@ Similarly, you can use the ``NO_QUERY_TRANSFORMATION`` hint to disable *all* que
 .. _`global temporary tables`: http://www.dba-oracle.com/t_tuning_sql_subqueries.htm
 .. _`use the TEMP rather than the UNDO tablespace`: http://www.dba-oracle.com/t_with_clause.htm
 .. _`Pro Oracle SQL`: http://www.apress.com/9781430232285
-.. _`Databaseline`: https://ianhellstrom.org/how-to-multiply-across-a-hierarchy-in-oracle-part-2/
+.. _`ianhellstrom.org`: https://ianhellstrom.org/how-to-multiply-across-a-hierarchy-in-oracle-part-2/
