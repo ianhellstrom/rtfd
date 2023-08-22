@@ -220,7 +220,7 @@ In case the initialization parameter ``_CONVERT_SET_TO_JOIN`` has been set, you 
 .. _`global temporary table`: http://www.dba-oracle.com/t_precompute_subquery_hint.htm
 .. _`hard-coded into the main query`: http://blog.tanelpoder.com/2009/01/23/multipart-cursor-subexecution-and-precompute_subquery-hint
 .. _`may not have access to statistics on the remote site(s)`: http://jonathanlewis.wordpress.com/2013/08/19/distributed-queries-3
-.. _`Ian Hellström`: https://databaseline.tech/tuning-distributed-queries-in-oracle/
+.. _`Ian Hellström`: https://ianhellstrom.org/tuning-distributed-queries-in-oracle/
 .. _`deprecated`: http://docs.oracle.com/cd/B12037_01/server.101/b10752/whatsnew.htm
 .. _`join elimination`: http://oracle-base.com/articles/misc/join-elimination.php
 .. _`still loaded`: http://docs.oracle.com/database/121/SUTIL/ldr_modes.htm#SUTIL1331

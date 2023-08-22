@@ -19,4 +19,4 @@ Just `send us`_ your query.
 .. _`SQL`: http://en.wikipedia.org/wiki/SQL
 .. _`Oracle`: http://www.google.de/search?q=learn+sql+oracle
 .. _`public repository`: https://github.com/ianhellstrom/rtfd
-.. _`send us`: mailto:ian@databaseline.tech?Subject=Oracle
+.. _`send us`: mailto:ian@ianhellstrom.org?Subject=Oracle
