@@ -2,7 +2,7 @@
 Licence
 #######
 
-Copyright 2014-2022 Ian Hellström.
+Copyright 2014-2024 Ian Hellström.
 All rights reserved.
 
 This file, as are all files on the public repository `rtfd <https://github.com/ianhellstrom/rtfd>`_, is part of **Oracle SQL & PL/SQL Optimization for Developers**.
